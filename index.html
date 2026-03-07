@@ -237,7 +237,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 @keyframes mdBlink{0%,100%{opacity:1}50%{opacity:0}}
 
 /* ══ GLITCH SYSTEM ══ */
-/* Main cam canvas glitch classes */
 @keyframes glitchTear{
   0%{transform:none}
   15%{transform:translateX(-6px) skewX(-1.5deg)}
@@ -278,14 +277,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 .cam-canvas.glitch-tear{animation:glitchTear .18s steps(1) forwards}
 .cam-canvas.glitch-rgb{animation:glitchRgb .22s steps(2) forwards}
 .cam-canvas.glitch-shake{animation:glitchShake .15s steps(1) forwards}
-/* Full cam main glitch overlay */
 .glitch-overlay{position:absolute;inset:0;z-index:9;pointer-events:none;opacity:0;
   background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0px,rgba(0,0,0,0) 2px,rgba(0,255,0,.04) 2px,rgba(0,255,0,.04) 3px)}
 .cam-main.has-glitch .glitch-overlay{opacity:1}
-/* Scan-tear glitch – a displaced horizontal band */
 #glitchTearBand{position:absolute;left:0;right:0;height:12px;z-index:10;pointer-events:none;
   background:rgba(0,0,0,.5);display:none;mix-blend-mode:difference}
-/* Thumbnail glitch */
 @keyframes thumbGlitch{
   0%,100%{filter:none;transform:none}
   30%{filter:hue-rotate(120deg) saturate(5);transform:translateX(2px) scaleY(1.01)}
@@ -492,7 +488,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 
 <script>
 /* ================================================================
-   ONE NIGHT AT MEESTER GIJS  –  v3
+   ONE NIGHT AT MEESTER GIJS  –  v3.1 (bugfix: music room lockout)
    ================================================================ */
 
 const FILES = {
@@ -529,10 +525,10 @@ const DOOR_RETREAT_MAX  = 25000;
 const MOVE_IVAL         = [32000, 24000, 16000, 11000, 7500, 5000];
 const HOBO_MIN_MS       = 5000;
 const HOBO_MAX_MS       = 20000;
-const MB_DRAIN_BASE     = 1;  // % per tick at hour 0
-const MB_DRAIN_SCALE    = 0.5;  // extra % per hour
-const MB_WIND_RATE      = 5.5;   // % per tick while winding
-const MUSIC_CAM_ID      = 5;     // index in CAMS
+const MB_DRAIN_BASE     = 1;
+const MB_DRAIN_SCALE    = 0.5;
+const MB_WIND_RATE      = 5.5;
+const MUSIC_CAM_ID      = 5;   // CAM 6 index — only Tom lives here
 
 /* ── CAMERA DEFINITIONS ── */
 const CAMS = [
@@ -544,7 +540,18 @@ const CAMS = [
   { id:5, name:'CAM 6', room:'MUZIEKKAMER'  },
 ];
 
+/* ── POSITIONS
+   0-4 = cam rooms (Gijs/Hobo allowed: 0-4 only, NOT 5)
+   5   = LEFT DOOR
+   6   = RIGHT DOOR
+   Muziekkamer (cam 5) is ONLY for Tom — Gijs and Hobo never go there.
+── */
 const POS = { C0:0, C1:1, C2:2, C3:3, C4:4, LD:5, RD:6 };
+
+// Positions Gijs is allowed to occupy (not music room = cam index 5)
+const GIJS_ALLOWED_CAMS = [POS.C0, POS.C1, POS.C2, POS.C3, POS.C4]; // indices 0-4
+// Positions Hobo is allowed to occupy (also not music room)
+const HOBO_ALLOWED_CAMS = [POS.C0, POS.C1, POS.C2, POS.C3, POS.C4]; // indices 0-4
 
 /* ── STATE ── */
 let G = {};
@@ -883,130 +890,83 @@ function drawRightHall(ctx,W,H){drawHall(ctx,W,H,'right')}
 
 /* ──── MUZIEKKAMER ──── */
 function drawMusicRoom(ctx,W,H){
-  // Deep warm dark background
   const bg=ctx.createLinearGradient(0,0,0,H);
   bg.addColorStop(0,'#0a0806');bg.addColorStop(.5,'#080604');bg.addColorStop(1,'#060402');
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-
-  // Warm lamp glow from upper right
   const lampGlow=ctx.createRadialGradient(W*.8,H*.1,0,W*.8,H*.1,W*.5);
   lampGlow.addColorStop(0,'rgba(200,130,40,0.12)');lampGlow.addColorStop(1,'rgba(200,130,40,0)');
   ctx.fillStyle=lampGlow;ctx.fillRect(0,0,W,H);
-
-  // Back wall with wood paneling
   ctx.fillStyle='#0c0a06';ctx.fillRect(0,0,W,H*.6);
   ctx.strokeStyle='rgba(80,50,10,.12)';ctx.lineWidth=1;
   for(let x=0;x<W;x+=W*.08){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H*.6);ctx.stroke()}
-
-  // Floor planks
   const floorG=ctx.createLinearGradient(0,H*.6,0,H);
   floorG.addColorStop(0,'#0e0a06');floorG.addColorStop(1,'#080602');
   ctx.fillStyle=floorG;ctx.fillRect(0,H*.6,W,H*.4);
   ctx.strokeStyle='rgba(60,40,10,.2)';ctx.lineWidth=1;
   for(let x=0;x<W;x+=W*.07){ctx.beginPath();ctx.moveTo(x,H*.6);ctx.lineTo(x+W*.03,H);ctx.stroke()}
-
-  // Grand piano silhouette – center-left
   const px=W*.08,py=H*.22,pw=W*.32,ph=H*.45;
   const pianoG=ctx.createLinearGradient(px,py,px+pw,py+ph);
   pianoG.addColorStop(0,'#0e0c08');pianoG.addColorStop(.5,'#141008');pianoG.addColorStop(1,'#0a0806');
   ctx.fillStyle=pianoG;
-  // Piano body (grand shape)
   ctx.beginPath();
-  ctx.moveTo(px,py+ph*.15);
-  ctx.lineTo(px+pw*.05,py);
-  ctx.lineTo(px+pw*.85,py);
+  ctx.moveTo(px,py+ph*.15);ctx.lineTo(px+pw*.05,py);ctx.lineTo(px+pw*.85,py);
   ctx.bezierCurveTo(px+pw,py,px+pw,py+ph*.4,px+pw*.9,py+ph*.55);
-  ctx.lineTo(px+pw*.6,py+ph);
-  ctx.lineTo(px,py+ph);
-  ctx.closePath();ctx.fill();
+  ctx.lineTo(px+pw*.6,py+ph);ctx.lineTo(px,py+ph);ctx.closePath();ctx.fill();
   ctx.strokeStyle='#201a10';ctx.lineWidth=2;ctx.stroke();
-  // Lid
   ctx.strokeStyle='#2a2010';ctx.lineWidth=1.5;
   ctx.beginPath();ctx.moveTo(px+pw*.05,py);ctx.lineTo(px+pw*.85,py);ctx.stroke();
-  // Keys area
-  ctx.fillStyle='#0a0806';
-  ctx.fillRect(px+pw*.05,py+ph*.7,pw*.6,ph*.15);
+  ctx.fillStyle='#0a0806';ctx.fillRect(px+pw*.05,py+ph*.7,pw*.6,ph*.15);
   ctx.strokeStyle='#1e1808';ctx.lineWidth=1;ctx.strokeRect(px+pw*.05,py+ph*.7,pw*.6,ph*.15);
-  // Keys
   const keyW=pw*.6/18;
   for(let k=0;k<18;k++){
     ctx.fillStyle=k%2===0?'rgba(240,230,210,0.15)':'rgba(0,0,0,0.4)';
     ctx.fillRect(px+pw*.05+k*keyW,py+ph*.7,keyW-0.5,ph*.15);
   }
-  // Piano leg
-  ctx.fillStyle='#141008';ctx.fillRect(px+pw*.1,py+ph,pw*.06,H*.12);
-  ctx.fillRect(px+pw*.5,py+ph,pw*.06,H*.12);
-
-  // Music stand – center
+  ctx.fillStyle='#141008';ctx.fillRect(px+pw*.1,py+ph,pw*.06,H*.12);ctx.fillRect(px+pw*.5,py+ph,pw*.06,H*.12);
   const msx=W*.48,msy=H*.15,msw=W*.12,msh=H*.25;
-  // Stand post
   ctx.strokeStyle='#1e1808';ctx.lineWidth=3;
   ctx.beginPath();ctx.moveTo(msx+msw/2,msy+msh);ctx.lineTo(msx+msw/2,msy+msh+H*.2);ctx.stroke();
-  // Stand base
   ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(msx+msw*.2,msy+msh+H*.2);ctx.lineTo(msx+msw*.8,msy+msh+H*.2);ctx.stroke();
-  // Sheet music holder
   const shG=ctx.createLinearGradient(msx,msy,msx,msy+msh);
   shG.addColorStop(0,'#1a1408');shG.addColorStop(1,'#141008');
   ctx.fillStyle=shG;ctx.fillRect(msx,msy,msw,msh);ctx.strokeStyle='#2a2010';ctx.lineWidth=1;ctx.strokeRect(msx,msy,msw,msh);
-  // Sheet music paper
   ctx.fillStyle='rgba(200,190,160,.08)';ctx.fillRect(msx+3,msy+3,msw-6,msh-6);
-  // Music lines
   ctx.strokeStyle='rgba(100,80,40,.15)';ctx.lineWidth=.5;
   for(let l=0;l<5;l++){const ly=msy+msh*.25+l*(msh*.55/5);ctx.beginPath();ctx.moveTo(msx+5,ly);ctx.lineTo(msx+msw-5,ly);ctx.stroke()}
-
-  // Wall-mounted lamp (upper right)
   ctx.fillStyle='#1a1408';ctx.fillRect(W*.78,H*.04,W*.04,H*.05);ctx.strokeStyle='#2a2010';ctx.lineWidth=1;ctx.strokeRect(W*.78,H*.04,W*.04,H*.05);
-  // Lampshade
   ctx.fillStyle='#181208';
   ctx.beginPath();ctx.moveTo(W*.76,H*.09);ctx.lineTo(W*.84,H*.09);ctx.lineTo(W*.82,H*.16);ctx.lineTo(W*.78,H*.16);ctx.closePath();ctx.fill();
   ctx.strokeStyle='#2a2010';ctx.lineWidth=1;ctx.stroke();
-  // Lamp glow beneath
   const lg2=ctx.createRadialGradient(W*.8,H*.16,0,W*.8,H*.16,H*.25);
   lg2.addColorStop(0,'rgba(200,140,40,0.08)');lg2.addColorStop(1,'rgba(200,140,40,0)');
   ctx.fillStyle=lg2;ctx.fillRect(0,0,W,H);
-
-  // Hanging violin on wall
   const vx=W*.66,vy=H*.08,vw=W*.04,vh=H*.22;
   ctx.strokeStyle='#1e1606';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(vx+vw/2,vy-H*.02);ctx.lineTo(vx+vw/2,vy);ctx.stroke();
-  // Violin body
   ctx.fillStyle='#1a1208';
   ctx.beginPath();ctx.ellipse(vx+vw/2,vy+vh*.3,vw*.4,vh*.28,0,0,Math.PI*2);ctx.fill();
   ctx.beginPath();ctx.ellipse(vx+vw/2,vy+vh*.72,vw*.5,vh*.3,0,0,Math.PI*2);ctx.fill();
   ctx.strokeStyle='#2a2010';ctx.lineWidth=1;
   ctx.beginPath();ctx.ellipse(vx+vw/2,vy+vh*.3,vw*.4,vh*.28,0,0,Math.PI*2);ctx.stroke();
   ctx.beginPath();ctx.ellipse(vx+vw/2,vy+vh*.72,vw*.5,vh*.3,0,0,Math.PI*2);ctx.stroke();
-  // Neck
   ctx.fillStyle='#160e04';ctx.fillRect(vx+vw*.35,vy,vw*.3,vh*.15);
-
-  // Dust particles
   ctx.fillStyle='rgba(200,180,100,.04)';
   for(let i=0;i<20;i++){ctx.beginPath();ctx.arc(Math.random()*W,Math.random()*H,Math.random()*1.5,0,Math.PI*2);ctx.fill()}
-
-  // Music box object on a small table – lower center
   const mbx=W*.42,mby=H*.62,mbw=W*.16,mbh=H*.1;
-  // Table
   ctx.fillStyle='#0e0a06';ctx.fillRect(mbx-mbw*.1,mby+mbh,mbw*1.2,H*.04);ctx.strokeStyle='#1e1608';ctx.lineWidth=1;ctx.strokeRect(mbx-mbw*.1,mby+mbh,mbw*1.2,H*.04);
-  // Table legs
   ctx.strokeStyle='#1a1408';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(mbx,mby+mbh+H*.04);ctx.lineTo(mbx,mby+mbh+H*.15);ctx.stroke();
   ctx.beginPath();ctx.moveTo(mbx+mbw,mby+mbh+H*.04);ctx.lineTo(mbx+mbw,mby+mbh+H*.15);ctx.stroke();
-  // Music box body
   const mbg=ctx.createLinearGradient(mbx,mby,mbx+mbw,mby+mbh);
   mbg.addColorStop(0,'#1e1408');mbg.addColorStop(.5,'#2a1e0c');mbg.addColorStop(1,'#181008');
   ctx.fillStyle=mbg;ctx.fillRect(mbx,mby,mbw,mbh);ctx.strokeStyle='#3a2c14';ctx.lineWidth=2;ctx.strokeRect(mbx,mby,mbw,mbh);
-  // Music box lid detail
   ctx.strokeStyle='#4a3c20';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(mbx+4,mby+4);ctx.lineTo(mbx+mbw-4,mby+4);ctx.stroke();
-  // Music box key/handle
   ctx.fillStyle='#3a2a10';ctx.fillRect(mbx+mbw-8,mby+mbh*.3,6,mbh*.4);
   ctx.fillStyle='#6a5020';ctx.beginPath();ctx.arc(mbx+mbw-5,mby+mbh*.3,5,0,Math.PI*2);ctx.fill();
-  // Faint glow from box when music playing
   const boxGlow=ctx.createRadialGradient(mbx+mbw/2,mby+mbh/2,0,mbx+mbw/2,mby+mbh/2,mbw*.8);
   boxGlow.addColorStop(0,'rgba(220,180,60,0.06)');boxGlow.addColorStop(1,'rgba(220,180,60,0)');
   ctx.fillStyle=boxGlow;ctx.fillRect(0,0,W,H);
-
-  // Label
   ctx.fillStyle='rgba(180,140,60,.25)';ctx.font=`${Math.max(8,W*.018)}px 'Share Tech Mono',monospace`;ctx.fillText('MUZIEKKAMER — CAM 6',W*.02,H*.97);
 }
 
@@ -1033,10 +993,7 @@ function buildCamStrip(){
 
 function switchCam(id){
   if(id!==G.curCam) play('cameraSwitch');
-
-  // Stop music cam audio if leaving music cam
   if(G.curCam===MUSIC_CAM_ID&&id!==MUSIC_CAM_ID){
-    // fade out handled via volume set
     if(SFX.muziek) SFX.muziek.volume=0.15;
   }
   G.curCam=id;
@@ -1044,23 +1001,19 @@ function switchCam(id){
   document.getElementById('ct'+id)?.classList.add('ct-on');
   document.getElementById('camNameLbl').textContent=CAMS[id].name;
   document.getElementById('camRoomLbl').textContent=CAMS[id].room;
-
-  // Music box panel visibility
   const mbp=document.getElementById('musicBoxPanel');
   mbp.style.display = id===MUSIC_CAM_ID ? 'flex' : 'none';
-
-  // Music volume louder on music cam
   if(SFX.muziek) SFX.muziek.volume = id===MUSIC_CAM_ID ? 0.55 : 0.15;
-
   renderCamFeed();
   updateLureUI();
 }
 
 function renderCamFeed(){
   const id=G.curCam;
-  const gijsHere=G.mPos===id;
-  const hoboHere=G.hoboPos===id;
-  const tomHere=id===MUSIC_CAM_ID;
+  // FIX: Gijs and Hobo can NEVER appear on the music cam (cam 5 = MUSIC_CAM_ID)
+  const gijsHere = G.mPos===id && id!==MUSIC_CAM_ID;
+  const hoboHere = G.hoboPos===id && id!==MUSIC_CAM_ID;
+  const tomHere  = id===MUSIC_CAM_ID;
 
   const cv=document.getElementById('camCanvas');
   cv.width=cv.offsetWidth||800;cv.height=cv.offsetHeight||400;
@@ -1072,7 +1025,6 @@ function renderCamFeed(){
   document.getElementById('hoboCamImg').style.display=hoboHere?'block':'none';
   if(hoboHere) document.getElementById('hoboCamImg').src=FILES.hoboGijsCam;
 
-  // Tom – always on music cam, appearance driven by music box level
   const tomImg=document.getElementById('tomCamImg');
   tomImg.style.display=tomHere?'block':'none';
   if(tomHere){
@@ -1080,7 +1032,6 @@ function renderCamFeed(){
     applyTomStyle(tomImg,G.musicBox);
   }
 
-  // Danger vignette overlay
   const overlay=document.getElementById('tomDangerOverlay');
   if(tomHere){
     const danger=Math.max(0,(100-G.musicBox)/100);
@@ -1096,7 +1047,6 @@ function renderCamFeed(){
 function applyTomStyle(img,level){
   let filter,transform,opacity;
   if(level>75){
-    // Almost invisible – deep shadow in the corner
     filter='brightness(0.04) contrast(4) saturate(0)';
     transform='translateX(-50%) scale(0.65) translateY(8%)';
     opacity='0.5';
@@ -1122,7 +1072,6 @@ function applyTomStyle(img,level){
     opacity='1';
     img.style.animation='tomCrit 0.5s infinite';
   } else {
-    // Critical – huge, glowing red
     filter='brightness(1.1) contrast(1.1) saturate(4) hue-rotate(340deg)';
     transform='translateX(-50%) scale(1.12)';
     opacity='1';
@@ -1136,9 +1085,10 @@ function applyTomStyle(img,level){
 
 function refreshMonsterDots(){
   CAMS.forEach(c=>{
-    document.getElementById('md'+c.id)?.classList.toggle('on',G.mPos===c.id);
-    document.getElementById('hd'+c.id)?.classList.toggle('on',G.hoboPos===c.id);
-    // Tom dot: always on music cam, pulses faster when low
+    // FIX: Gijs dot never shows on music cam
+    document.getElementById('md'+c.id)?.classList.toggle('on', G.mPos===c.id && c.id!==MUSIC_CAM_ID);
+    // FIX: Hobo dot never shows on music cam
+    document.getElementById('hd'+c.id)?.classList.toggle('on', G.hoboPos===c.id && c.id!==MUSIC_CAM_ID);
     const td=document.getElementById('td'+c.id);
     if(td&&c.id===MUSIC_CAM_ID){
       td.className='ct-tomdot on';
@@ -1150,7 +1100,6 @@ function refreshMonsterDots(){
   document.getElementById('dotMon').classList.toggle('on',G.mPos>=POS.LD);
   document.getElementById('dotHobo').classList.toggle('on',true);
 
-  // Tom/music dot
   const dotTom=document.getElementById('dotTom');
   if(dotTom){
     dotTom.className='hud-status-dot';
@@ -1173,14 +1122,12 @@ function updateMusicBoxUI(){
   else if(p<=55){status='MATIG — IN DE GATEN HOUDEN';}
   document.getElementById('mbStatus').textContent=status;
 
-  // Music cam thumb warning
   const ct=document.getElementById('ct'+MUSIC_CAM_ID);
   if(ct){
     if(p<=25) ct.classList.add('ct-music-warn');
     else ct.classList.remove('ct-music-warn');
   }
 
-  // Slow down / distort music as it drains
   if(SFX.muziek){
     if(p>50) SFX.muziek.playbackRate=1;
     else if(p>25) SFX.muziek.playbackRate=0.82;
@@ -1188,7 +1135,6 @@ function updateMusicBoxUI(){
     else SFX.muziek.playbackRate=0.4;
   }
 
-  // Tom danger overlay
   if(G.curCam===MUSIC_CAM_ID){
     const overlay=document.getElementById('tomDangerOverlay');
     const danger=Math.max(0,(100-p)/100);
@@ -1205,7 +1151,6 @@ function startWindUp(e){
   if(G.curCam!==MUSIC_CAM_ID) return;
   G.isWindingUp=true;
   document.getElementById('windupBtn').classList.add('winding');
-  // Loop WindUp sound
   if(SFX.windUp){SFX.windUp.currentTime=0;SFX.windUp.play().catch(()=>{});}
 }
 
@@ -1235,16 +1180,32 @@ function toggleDoor(side){
   if(G.dead||G.won) return;
   const closing=!(side==='left'?G.lfClosed:G.rtClosed);
   if(closing){play('doorClose');G.o2=Math.max(0,G.o2-O2_DCLICK);updateO2UI();}
+
   if(side==='left'){
     G.lfClosed=!G.lfClosed;
     document.getElementById('dpL').classList.toggle('shut',G.lfClosed);
     const b=document.getElementById('dbL');b.textContent=G.lfClosed?'OPEN':'DEUR';b.classList.toggle('on',G.lfClosed);
-    if(!G.lfClosed&&G.mPos===POS.LD) armDoorTimer();
+    // FIX: Only arm door timer when OPENING the door while Gijs is already there
+    // (not when closing — closing is safe and should cancel any pending attack)
+    if(G.lfClosed){
+      // Door just closed — cancel any pending attack from left door
+      if(G.mPos===POS.LD&&G.mDoorTimer){clearTimeout(G.mDoorTimer);G.mDoorTimer=null;}
+    } else {
+      // Door just opened — if Gijs is at the left door, arm the attack timer
+      if(G.mPos===POS.LD) armDoorTimer();
+    }
   } else {
     G.rtClosed=!G.rtClosed;
     document.getElementById('dpR').classList.toggle('shut',G.rtClosed);
     const b=document.getElementById('dbR');b.textContent=G.rtClosed?'OPEN':'DEUR';b.classList.toggle('on',G.rtClosed);
-    if(!G.rtClosed&&G.mPos===POS.RD) armDoorTimer();
+    // FIX: Same fix for right door
+    if(G.rtClosed){
+      // Door just closed — cancel any pending attack from right door
+      if(G.mPos===POS.RD&&G.mDoorTimer){clearTimeout(G.mDoorTimer);G.mDoorTimer=null;}
+    } else {
+      // Door just opened — if Gijs is at the right door, arm the attack timer
+      if(G.mPos===POS.RD) armDoorTimer();
+    }
   }
   refreshDoorLights();
 }
@@ -1266,16 +1227,28 @@ function scheduleMoveTimer(){
 function advanceMonster(){
   if(G.dead||G.won) return;
   const p=G.mPos;
+  // Already at a door — don't move further (handled by handleAtDoor/retreatGijs)
   if(p===POS.LD||p===POS.RD) return;
   if(Math.random()<0.2) play('laugh');
+
   let np=p;
-  if(p===POS.C0)np=POS.C1;
-  else if(p===POS.C1)np=POS.C2;
-  else if(p===POS.C2){if(!G.mPath)G.mPath=Math.random()<.5?'left':'right';np=G.mPath==='left'?POS.C3:POS.C4;G.mPath=null;}
-  else if(p===POS.C3)np=POS.LD;
-  else if(p===POS.C4)np=POS.RD;
+  if(p===POS.C0) np=POS.C1;
+  else if(p===POS.C1) np=POS.C2;
+  else if(p===POS.C2){
+    // FIX: Gijs chooses between left hall (C3) or right hall (C4) — NEVER music room (C5)
+    if(!G.mPath) G.mPath=Math.random()<.5?'left':'right';
+    np=G.mPath==='left'?POS.C3:POS.C4;
+    G.mPath=null;
+  }
+  else if(p===POS.C3) np=POS.LD;
+  else if(p===POS.C4) np=POS.RD;
+  // FIX: If somehow Gijs is at C5 (music room), redirect him back to C2
+  // This should never happen with the above logic, but acts as a safety net
+  else if(p===MUSIC_CAM_ID) np=POS.C2;
+
   G.mPos=np;
-  refreshMonsterDots();refreshDoorLights();
+  refreshMonsterDots();
+  refreshDoorLights();
   if(G.camOpen) renderCamFeed();
   if(np===POS.LD||np===POS.RD) handleAtDoor(np);
 }
@@ -1283,6 +1256,8 @@ function advanceMonster(){
 function handleAtDoor(pos){
   refreshDoorLights();
   const closed=pos===POS.LD?G.lfClosed:G.rtClosed;
+  // FIX: Only arm door timer if the door is currently OPEN
+  // If door is already closed when Gijs arrives, he can't get in
   if(!closed) armDoorTimer();
   if(G.mRetreatTimer) clearTimeout(G.mRetreatTimer);
   const rd=DOOR_RETREAT_MIN+Math.random()*(DOOR_RETREAT_MAX-DOOR_RETREAT_MIN);
@@ -1293,10 +1268,12 @@ function retreatGijs(){
   if(G.dead||G.won) return;
   if(G.mPos!==POS.LD&&G.mPos!==POS.RD) return;
   if(G.mDoorTimer){clearTimeout(G.mDoorTimer);G.mDoorTimer=null;}
+  // FIX: Retreat only to non-music-room cam positions
   const backs=[POS.C0,POS.C1,POS.C2];
   G.mPos=backs[Math.floor(Math.random()*backs.length)];
   play('footsteps');
-  refreshMonsterDots();refreshDoorLights();
+  refreshMonsterDots();
+  refreshDoorLights();
   if(G.camOpen) renderCamFeed();
   updateLureUI();
 }
@@ -1306,6 +1283,7 @@ function armDoorTimer(){
   if(G.dead||G.won) return;
   G.mDoorTimer=setTimeout(()=>{
     if(G.dead||G.won) return;
+    // FIX: Double-check door is still open before triggering jumpscare
     if(G.mPos===POS.LD&&!G.lfClosed) triggerGijsJS();
     if(G.mPos===POS.RD&&!G.rtClosed) triggerGijsJS();
   },GRACE_MS);
@@ -1321,7 +1299,13 @@ function scheduleHoboMove(){
 
 function moveHobo(){
   if(G.dead||G.won) return;
-  let np; do{np=Math.floor(Math.random()*(CAMS.length-1));}while(np===G.hoboPos); // stays off music cam
+  // FIX: Hobo only moves within HOBO_ALLOWED_CAMS (indices 0-4), never to music room (5)
+  let np;
+  let attempts=0;
+  do {
+    np=HOBO_ALLOWED_CAMS[Math.floor(Math.random()*HOBO_ALLOWED_CAMS.length)];
+    attempts++;
+  } while(np===G.hoboPos && attempts<20);
   G.hoboPos=np;
   refreshMonsterDots();
   if(G.camOpen) renderCamFeed();
@@ -1331,14 +1315,25 @@ function moveHobo(){
 /* ════ LURE ════ */
 function inLureRange(){
   if(!G.camOpen) return false;
-  const adj={[POS.C0]:[POS.C1],[POS.C1]:[POS.C0,POS.C2],[POS.C2]:[POS.C1,POS.C3,POS.C4],
-    [POS.C3]:[POS.C2,POS.LD],[POS.C4]:[POS.C2,POS.RD],[POS.LD]:[POS.C3],[POS.RD]:[POS.C4]};
-  const gijsInRange=G.mPos===G.curCam||(adj[G.mPos]||[]).includes(G.curCam);
-  const hoboInRange=G.hoboPos===G.curCam;
+  const adj={
+    [POS.C0]:[POS.C1],
+    [POS.C1]:[POS.C0,POS.C2],
+    [POS.C2]:[POS.C1,POS.C3,POS.C4],
+    [POS.C3]:[POS.C2,POS.LD],
+    [POS.C4]:[POS.C2,POS.RD],
+    [POS.LD]:[POS.C3],
+    [POS.RD]:[POS.C4]
+  };
+  // FIX: Lure only works for Gijs on non-music cams; hobo also excluded from music cam
+  const gijsInRange = G.curCam!==MUSIC_CAM_ID &&
+    (G.mPos===G.curCam || (adj[G.mPos]||[]).includes(G.curCam));
+  const hoboInRange = G.curCam!==MUSIC_CAM_ID && G.hoboPos===G.curCam;
   return gijsInRange||hoboInRange;
 }
 
-function hoboOnCurrentCam(){return G.camOpen&&G.hoboPos===G.curCam;}
+function hoboOnCurrentCam(){
+  return G.camOpen && G.hoboPos===G.curCam && G.curCam!==MUSIC_CAM_ID;
+}
 
 function updateLureUI(){
   const ready=G.lureReady,range=inLureRange();
@@ -1364,18 +1359,27 @@ function useLure(){
   if(!G.lureReady||!inLureRange()||G.dead||G.won) return;
   if(hoboOnCurrentCam()){triggerHoboJS();return;}
   play('lure');
-  const pb={[POS.LD]:POS.C3,[POS.RD]:POS.C4,[POS.C3]:POS.C2,[POS.C4]:POS.C2,[POS.C2]:POS.C1,[POS.C1]:POS.C0,[POS.C0]:POS.C0};
+  const pb={
+    [POS.LD]:POS.C3,[POS.RD]:POS.C4,
+    [POS.C3]:POS.C2,[POS.C4]:POS.C2,
+    [POS.C2]:POS.C1,[POS.C1]:POS.C0,[POS.C0]:POS.C0
+  };
   const np=pb[G.mPos];
   if(np!==undefined){
     G.mPos=np;
     if(G.mDoorTimer){clearTimeout(G.mDoorTimer);G.mDoorTimer=null;}
     if(G.mRetreatTimer){clearTimeout(G.mRetreatTimer);G.mRetreatTimer=null;}
-    refreshMonsterDots();refreshDoorLights();
+    refreshMonsterDots();
+    refreshDoorLights();
     if(G.camOpen) renderCamFeed();
   }
   G.lureReady=false;G.lureCD=LURE_CD_S;
   clearInterval(G.lureCDTimer);
-  G.lureCDTimer=setInterval(()=>{G.lureCD--;if(G.lureCD<=0){G.lureReady=true;G.lureCD=0;clearInterval(G.lureCDTimer);}updateLureUI();},1000);
+  G.lureCDTimer=setInterval(()=>{
+    G.lureCD--;
+    if(G.lureCD<=0){G.lureReady=true;G.lureCD=0;clearInterval(G.lureCDTimer);}
+    updateLureUI();
+  },1000);
   updateLureUI();
 }
 
@@ -1388,11 +1392,7 @@ function gameTick(){
   G.o2=Math.max(0,G.o2-drain);
   updateO2UI();
   if(G.o2<=0&&!G.o2Dead) oxygenDepleted();
-
-  // Music box drain/wind
   tickMusicBox();
-
-  // Glitch events
   maybeGlitch();
 }
 
@@ -1432,9 +1432,9 @@ function tickMusicBox(){
 function maybeGlitch(){
   if(G.dead||G.won||!G.camOpen||glitchActive) return;
 
-  const gijsOnCam  = G.mPos===G.curCam;
+  const gijsOnCam  = G.mPos===G.curCam && G.curCam!==MUSIC_CAM_ID;
   const gijsNear   = [POS.LD,POS.RD].includes(G.mPos);
-  const hoboOnCam  = G.hoboPos===G.curCam;
+  const hoboOnCam  = G.hoboPos===G.curCam && G.curCam!==MUSIC_CAM_ID;
   const musicLow   = G.curCam===MUSIC_CAM_ID&&G.musicBox<40;
 
   let chance=0.006;
@@ -1444,8 +1444,6 @@ function maybeGlitch(){
   if(musicLow)   chance+=0.04*(1-G.musicBox/40);
 
   if(Math.random()<chance) fireGlitch();
-
-  // Rare full-screen glitch regardless of camera (Gijs at door)
   if(gijsNear&&Math.random()<0.008) fireFullScreenGlitch();
 }
 
@@ -1458,7 +1456,6 @@ function fireGlitch(){
   camCanvas.classList.add(type);
   camMain.classList.add('has-glitch');
 
-  // Optionally displace the tear band
   if(type==='glitch-tear'&&Math.random()<0.5){
     const band=document.getElementById('glitchTearBand');
     band.style.top=Math.floor(Math.random()*100)+'%';
@@ -1472,14 +1469,11 @@ function fireGlitch(){
     camMain.classList.remove('has-glitch');
     document.getElementById('glitchTearBand').style.display='none';
     glitchActive=false;
-
-    // Chance of a rapid double-glitch
     if(Math.random()<0.3) setTimeout(fireGlitch,80+Math.random()*150);
   },duration);
 
-  // Thumbnail glitch on monster's current cam
-  glitchThumbnail(G.mPos<CAMS.length?G.mPos:null);
-  glitchThumbnail(G.hoboPos<CAMS.length?G.hoboPos:null);
+  glitchThumbnail(G.mPos<CAMS.length&&G.mPos!==MUSIC_CAM_ID?G.mPos:null);
+  glitchThumbnail(G.hoboPos<CAMS.length&&G.hoboPos!==MUSIC_CAM_ID?G.hoboPos:null);
 }
 
 function glitchThumbnail(camId){
@@ -1613,7 +1607,6 @@ function startGame(){
 
   initAudio();play('ambience');
 
-  // Music starts softly (music box playing in background)
   if(SFX.muziek){SFX.muziek.volume=0.15;SFX.muziek.playbackRate=1;SFX.muziek.play().catch(()=>{});}
 
   drawOffice();
@@ -1624,13 +1617,18 @@ function startGame(){
   updateLureUI();
 
   G.lureCD=LURE_CD_S;
-  G.lureCDTimer=setInterval(()=>{G.lureCD--;if(G.lureCD<=0){G.lureReady=true;G.lureCD=0;clearInterval(G.lureCDTimer);}updateLureUI();},1000);
+  G.lureCDTimer=setInterval(()=>{
+    G.lureCD--;
+    if(G.lureCD<=0){G.lureReady=true;G.lureCD=0;clearInterval(G.lureCDTimer);}
+    updateLureUI();
+  },1000);
 
   G.tickTimer=setInterval(gameTick,TICK_MS);
   G.timeTimer=setInterval(tickTime,250);
   setTimeout(scheduleMoveTimer,5000);
 
-  G.hoboPos=Math.floor(Math.random()*(CAMS.length-1));
+  // FIX: Hobo starts on a random cam that is NOT the music room
+  G.hoboPos=HOBO_ALLOWED_CAMS[Math.floor(Math.random()*HOBO_ALLOWED_CAMS.length)];
   scheduleHoboMove();
   G.fireOn=false;
 }
