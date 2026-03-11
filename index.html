@@ -21,51 +21,210 @@
 html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Share Tech Mono',monospace}
 .screen{position:absolute;inset:0;display:none}
 
-/* ══ START ══ */
-#startScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:radial-gradient(ellipse 90% 70% at 50% 110%,#1c0004 0%,#000 65%);z-index:200;overflow-y:auto}
-.start-eyebrow{font-size:clamp(.55rem,1vw,.7rem);color:#2a1a1a;letter-spacing:10px;text-transform:uppercase;margin-bottom:14px}
-.start-title{font-family:'Creepster',cursive;font-size:clamp(2.4rem,8vw,5.8rem);color:var(--red);line-height:1;
-  text-align:center;letter-spacing:3px;text-shadow:0 0 60px #ff000066,0 2px 0 #600;
-  animation:titleBreath 3s ease-in-out infinite;margin-bottom:4px}
-@keyframes titleBreath{0%,100%{text-shadow:0 0 40px #ff000055,0 2px 0 #600}50%{text-shadow:0 0 80px #ff0000aa,0 2px 0 #900,0 0 120px #ff000033}}
-.start-sub{font-family:'VT323',monospace;font-size:clamp(.9rem,2.5vw,1.5rem);color:#441111;letter-spacing:6px;margin-bottom:38px}
-.lore-card{max-width:min(620px,88vw);border:1px solid #220000;border-top:2px solid #550000;
-  background:rgba(8,0,0,.9);padding:26px 30px;margin-bottom:24px;position:relative}
-.lore-card::before{content:'DOSSIER #001';position:absolute;top:-10px;left:20px;
-  background:#000;padding:0 8px;font-size:.55rem;color:#440000;letter-spacing:4px}
-.lore-card p{color:#7a6060;font-size:clamp(.68rem,1.1vw,.8rem);line-height:1.85}
-.lore-card strong{color:#cc5555}
-.lore-card .quote{border-left:2px solid #440000;padding:10px 14px;margin:14px 0;
-  font-style:italic;color:#884444;font-size:clamp(.68rem,1.1vw,.78rem)}
-.lore-card .warn{color:#664444;font-size:.72em;margin-top:12px;opacity:.7}
-.mode-select{display:flex;gap:16px;margin-bottom:28px;max-width:min(620px,88vw);width:100%}
-.mode-btn{flex:1;background:transparent;border:2px solid #220000;color:#441111;
-  padding:18px 20px;font-family:'Share Tech Mono',monospace;font-size:clamp(.65rem,1.2vw,.8rem);
-  letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
-  display:flex;flex-direction:column;align-items:center;gap:8px}
-.mode-btn:hover{border-color:#880000;color:#cc4444}
-.mode-btn.selected{border-color:var(--red);color:var(--red);box-shadow:0 0 20px #88000044;background:rgba(192,18,26,.06)}
-.mode-btn.hard-selected{border-color:#ff6600;color:#ff6600;box-shadow:0 0 20px #ff660044;background:rgba(255,102,0,.06)}
-.mode-btn .mode-icon{font-size:1.8rem;margin-bottom:4px}
-.mode-btn .mode-name{font-size:clamp(.7rem,1.4vw,.9rem);letter-spacing:5px}
-.mode-btn .mode-desc{font-size:clamp(.5rem,.8vw,.6rem);color:#444;letter-spacing:2px;text-align:center;line-height:1.6}
-.mode-btn.hard-selected .mode-desc{color:#885500}
-.mode-btn.selected .mode-desc{color:#662222}
-.start-btn{background:transparent;border:1px solid var(--red);color:var(--red);
-  padding:14px 60px;font-family:'Share Tech Mono',monospace;font-size:clamp(.75rem,1.5vw,.9rem);
-  letter-spacing:7px;text-transform:uppercase;cursor:pointer;transition:all .2s;
-  animation:btnAnim 2s ease-in-out infinite;position:relative;overflow:hidden}
-.start-btn::before{content:'';position:absolute;inset:0;background:var(--red);transform:scaleX(0);
-  transform-origin:left;transition:transform .25s;z-index:-1}
-.start-btn:hover::before{transform:scaleX(1)}
-.start-btn:hover{color:#fff;letter-spacing:9px;box-shadow:0 0 30px #ff222266}
-.start-btn.hard-mode-btn{border-color:#ff6600;color:#ff6600;animation:btnAnimHard 2s ease-in-out infinite}
-.start-btn.hard-mode-btn::before{background:#ff6600}
-.start-btn.hard-mode-btn:hover{box-shadow:0 0 30px #ff660066}
-@keyframes btnAnim{0%,100%{box-shadow:0 0 6px #88000033}50%{box-shadow:0 0 20px #88000066}}
-@keyframes btnAnimHard{0%,100%{box-shadow:0 0 6px #ff660033}50%{box-shadow:0 0 20px #ff660066}}
-.start-hint{margin-top:16px;font-size:.55rem;color:#222;letter-spacing:4px}
+/* ══ WARNING SCREEN ══ */
+#warnScreen{
+  position:fixed;inset:0;z-index:300;
+  background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;
+}
+.warn-flicker{
+  position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.12) 0px,rgba(0,0,0,.12) 1px,transparent 1px,transparent 4px);
+  animation:warnScan 8s linear infinite;
+}
+@keyframes warnScan{0%{background-position:0 0}100%{background-position:0 100%}}
+.warn-box{
+  position:relative;z-index:2;
+  max-width:min(600px,90vw);
+  border:2px solid #ff0000;
+  background:#000;
+  padding:36px 40px;
+  box-shadow:0 0 40px rgba(255,0,0,.25),inset 0 0 60px rgba(255,0,0,.04);
+  animation:warnBoxPulse 2s ease-in-out infinite;
+}
+@keyframes warnBoxPulse{0%,100%{box-shadow:0 0 30px rgba(255,0,0,.2),inset 0 0 60px rgba(255,0,0,.03)}50%{box-shadow:0 0 60px rgba(255,0,0,.4),inset 0 0 80px rgba(255,0,0,.07)}}
+.warn-skull{font-size:clamp(2.5rem,6vw,4rem);text-align:center;margin-bottom:16px;animation:skullBlink 1.5s steps(1) infinite}
+@keyframes skullBlink{0%,89%{opacity:1}90%,100%{opacity:0}}
+.warn-title{
+  font-family:'VT323',monospace;
+  font-size:clamp(1.4rem,3.5vw,2.2rem);
+  color:#ff0000;letter-spacing:6px;
+  text-align:center;margin-bottom:20px;
+  text-shadow:0 0 20px #ff0000;
+  animation:warnTitleFlicker 3s infinite;
+}
+@keyframes warnTitleFlicker{0%,94%,96%,100%{opacity:1}95%{opacity:.3}}
+.warn-line{
+  font-family:'Share Tech Mono',monospace;
+  font-size:clamp(.6rem,1.1vw,.8rem);
+  color:#cc3333;letter-spacing:2px;
+  line-height:2;margin-bottom:8px;
+  padding-left:14px;border-left:2px solid #440000;
+}
+.warn-line.accent{color:#ff4444;font-size:clamp(.65rem,1.2vw,.85rem)}
+.warn-line.dim{color:#552222;font-size:clamp(.52rem,.9vw,.65rem)}
+.warn-divider{border:none;border-top:1px solid #330000;margin:18px 0}
+.warn-proceed-btn{
+  display:block;width:100%;margin-top:24px;
+  background:transparent;border:1px solid #880000;
+  color:#cc0000;padding:14px;
+  font-family:'VT323',monospace;font-size:clamp(1rem,2vw,1.4rem);
+  letter-spacing:8px;text-transform:uppercase;cursor:pointer;
+  transition:all .2s;position:relative;overflow:hidden;
+  animation:warnBtnPulse 1.5s ease-in-out infinite;
+}
+.warn-proceed-btn::before{content:'';position:absolute;inset:0;background:#cc0000;transform:scaleX(0);transform-origin:left;transition:transform .3s;z-index:-1}
+.warn-proceed-btn:hover::before{transform:scaleX(1)}
+.warn-proceed-btn:hover{color:#fff;letter-spacing:10px;box-shadow:0 0 30px #cc000066}
+@keyframes warnBtnPulse{0%,100%{box-shadow:0 0 6px #44000044}50%{box-shadow:0 0 18px #88000088}}
+.warn-err-code{font-family:'Share Tech Mono',monospace;font-size:.5rem;color:#220000;letter-spacing:3px;text-align:center;margin-top:14px;opacity:.6}
+/* blinking cursor */
+.blink{animation:blinkAnim .8s steps(1) infinite}
+@keyframes blinkAnim{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* ══ START SCREEN — Ransomware Terminal Aesthetic ══ */
+#startScreen{
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  background:#000;z-index:200;overflow-y:auto;position:relative;
+}
+/* CRT scanlines overlay */
+#startScreen::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.1) 0px,rgba(0,0,0,.1) 1px,transparent 1px,transparent 3px);
+}
+/* Flickering red corner glow */
+#startScreen::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:
+    radial-gradient(ellipse 50% 30% at 0% 100%,rgba(180,0,0,.18) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 30% at 100% 0%,rgba(100,0,0,.12) 0%,transparent 70%);
+  animation:cornerFlicker 4s ease-in-out infinite;
+}
+@keyframes cornerFlicker{0%,100%{opacity:1}45%{opacity:.6}46%{opacity:1}47%{opacity:.4}48%{opacity:1}}
+.start-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:24px 0;width:100%}
+/* Terminal header bar */
+.term-bar{
+  width:min(680px,92vw);
+  background:#0a0000;border:1px solid #1a0000;border-bottom:2px solid #330000;
+  padding:6px 14px;display:flex;align-items:center;gap:8px;margin-bottom:0;
+}
+.term-dot{width:10px;height:10px;border-radius:50%}
+.term-dot.r{background:#ff3b30}.term-dot.y{background:#ffcc00;opacity:.5}.term-dot.g{background:#30d158;opacity:.3}
+.term-title-bar{flex:1;text-align:center;font-size:.55rem;color:#331111;letter-spacing:5px}
+/* Main terminal window */
+.term-window{
+  width:min(680px,92vw);
+  background:#020000;border:1px solid #1a0000;border-top:none;
+  padding:28px 32px 22px;margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.term-window::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,rgba(255,0,0,.015) 0px,rgba(255,0,0,.015) 1px,transparent 1px,transparent 4px);
+  pointer-events:none;
+}
+.start-eyebrow{
+  font-size:clamp(.45rem,.75vw,.6rem);color:#330000;letter-spacing:8px;
+  text-transform:uppercase;margin-bottom:10px;font-family:'Share Tech Mono',monospace;
+}
+.start-eyebrow::before{content:'> ';color:#550000}
+.start-title{
+  font-family:'Creepster',cursive;
+  font-size:clamp(2rem,7vw,4.8rem);color:#cc0000;line-height:1;
+  text-align:center;letter-spacing:3px;
+  text-shadow:0 0 40px #ff000055,0 0 80px #ff000022,2px 2px 0 #3a0000;
+  animation:titleGlitch 5s infinite;margin-bottom:6px;
+}
+@keyframes titleGlitch{
+  0%,92%,100%{text-shadow:0 0 40px #ff000055,2px 2px 0 #3a0000;transform:none}
+  93%{text-shadow:-3px 0 #ff0000,3px 0 #880000;transform:translateX(2px)}
+  94%{text-shadow:3px 0 #ff0000,-2px 0 #440000;transform:translateX(-1px)}
+  95%{text-shadow:0 0 40px #ff000055,2px 2px 0 #3a0000;transform:none}
+}
+.start-sub{
+  font-family:'VT323',monospace;
+  font-size:clamp(.8rem,2vw,1.3rem);
+  color:#330000;letter-spacing:6px;margin-bottom:24px;text-align:center;
+}
+/* Lore card — terminal file readout */
+.lore-card{
+  max-width:100%;border:1px solid #1a0000;border-left:3px solid #440000;
+  background:rgba(8,0,0,.85);padding:18px 20px;margin-bottom:18px;position:relative;
+}
+.lore-card::before{
+  content:'DOSSIER';position:absolute;top:-9px;left:16px;
+  background:#020000;padding:0 6px;font-size:.5rem;color:#330000;letter-spacing:5px;
+  font-family:'Share Tech Mono',monospace;
+}
+.lore-card p{color:#664444;font-size:clamp(.6rem,.95vw,.72rem);line-height:1.9;font-family:'Share Tech Mono',monospace;}
+.lore-card strong{color:#cc4444}
+.lore-card .quote{
+  border-left:2px solid #330000;padding:8px 12px;margin:12px 0;
+  font-style:italic;color:#663333;font-size:clamp(.58rem,.88vw,.68rem);
+  font-family:'Share Tech Mono',monospace;
+}
+.lore-card .warn{color:#442222;font-size:.65em;margin-top:10px;opacity:.75;font-family:'Share Tech Mono',monospace;}
+/* start hint */
+.start-hint{margin-top:14px;font-size:.52rem;color:#1a0000;letter-spacing:4px;font-family:'Share Tech Mono',monospace}
+.start-hint::before{content:'// '}
+
+/* ══ NIGHT SELECT — terminal style ══ */
+.night-select{display:flex;gap:8px;margin-bottom:18px;max-width:min(680px,92vw);width:100%}
+.night-btn{
+  flex:1;background:#000;
+  border:1px solid #1a0000;color:#330000;
+  padding:12px 6px 10px;font-family:'Share Tech Mono',monospace;cursor:pointer;
+  transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px;
+  position:relative;overflow:hidden;
+}
+.night-btn::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:var(--red);transform:scaleX(0);transition:transform .2s;
+}
+.night-btn:hover{border-color:#440000;color:#770000}
+.night-btn:hover::after{transform:scaleX(1)}
+.night-btn.selected{
+  border-color:#880000;color:#cc0000;
+  background:rgba(180,0,0,.06);
+  box-shadow:0 0 14px #44000033;
+}
+.night-btn.selected::after{transform:scaleX(1)}
+.night-btn.night5-sel{
+  border-color:#cc3300!important;color:#ff4400!important;
+  background:rgba(200,40,0,.08)!important;
+  box-shadow:0 0 20px #88220033!important;
+}
+.nb-num{font-family:'VT323',monospace;font-size:clamp(.55rem,.9vw,.7rem);color:#220000;letter-spacing:3px}
+.nb-num span{font-size:clamp(1.2rem,2.4vw,1.7rem);display:block;line-height:1;margin-bottom:1px;font-family:'Creepster',cursive}
+.night-btn.selected .nb-num,.night-btn.selected .nb-num span{color:#cc0000}
+.night-btn.night5-sel .nb-num,.night-btn.night5-sel .nb-num span{color:#ff4400}
+.nb-title{font-size:clamp(.4rem,.68vw,.54rem);letter-spacing:2px;text-transform:uppercase;text-align:center;line-height:1.4}
+.nb-enemies{font-size:clamp(.35rem,.57vw,.46rem);color:#221111;letter-spacing:1px;text-align:center;line-height:1.5}
+.night-btn.selected .nb-enemies{color:#552222}
+.night-btn.night5-sel .nb-enemies{color:#663300}
+.nb-diff{font-size:clamp(.5rem,.8vw,.62rem);letter-spacing:2px;margin-top:2px}
+.diff-1{color:#1a3a0a}.diff-2{color:#3a5a0a}.diff-3{color:#666600}.diff-4{color:#883300}.diff-5{color:#aa0000;animation:diffFlash .7s infinite}
+@keyframes diffFlash{0%,100%{color:#aa0000;text-shadow:none}50%{color:#ff2200;text-shadow:0 0 8px #ff2200}}
+/* Start button — terminal execute style */
+.start-btn{
+  background:#000;border:1px solid #660000;color:#880000;
+  padding:13px 50px;font-family:'VT323',monospace;font-size:clamp(1rem,2.2vw,1.5rem);
+  letter-spacing:6px;text-transform:uppercase;cursor:pointer;transition:all .2s;
+  animation:btnAnim 2s ease-in-out infinite;position:relative;overflow:hidden;
+}
+.start-btn::before{content:'> ';color:#330000;transition:color .2s}
+.start-btn:not(:disabled)::after{content:'';position:absolute;inset:0;background:#880000;transform:scaleX(0);transform-origin:left;transition:transform .25s;z-index:-1}
+.start-btn:not(:disabled):hover::after{transform:scaleX(1)}
+.start-btn:not(:disabled):hover{color:#ff0000;letter-spacing:8px;box-shadow:0 0 24px #66000055}
+.start-btn:not(:disabled):hover::before{color:#ff0000}
+.start-btn.night5-btn{border-color:#cc3300;color:#cc3300;animation:btnAnimHard 2s ease-in-out infinite}
+.start-btn.night5-btn:not(:disabled)::after{background:#cc3300}
+.start-btn.night5-btn:not(:disabled):hover{box-shadow:0 0 24px #88220055}
+.start-btn:disabled{border-color:#110000;color:#110000;cursor:not-allowed;animation:none;box-shadow:none}
+.start-btn:disabled::before{color:#110000}
+@keyframes btnAnim{0%,100%{box-shadow:0 0 4px #22000022}50%{box-shadow:0 0 14px #44000044}}
+@keyframes btnAnimHard{0%,100%{box-shadow:0 0 4px #44110022}50%{box-shadow:0 0 16px #88220055}}
 
 /* ══ GAME ══ */
 #gameScreen{display:none;position:absolute;inset:0;overflow:hidden}
@@ -553,41 +712,76 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 </head>
 <body>
 
+<!-- ════ WARNING SCREEN ════ -->
+<div id="warnScreen">
+  <div class="warn-flicker"></div>
+  <div class="warn-box">
+    <div class="warn-skull">💀</div>
+    <div class="warn-title">WAARSCHUWING<span class="blink">_</span></div>
+    <div class="warn-line accent">Dit spel bevat frequente jumpscares en harde geluiden.</div>
+    <div class="warn-line">Spelen met koptelefoon wordt aanbevolen maar doe dit op eigen risico.</div>
+    <hr class="warn-divider">
+    <div class="warn-line">Dit spel is een satirische horror-parodie gebaseerd op publieke figuren en klasgenoten. De personages en situaties zijn fictief en bedoeld als humor.</div>
+    <div class="warn-line dim">Niet iedereen zal de humor in dit spel kunnen waarderen. Als jij of iemand die je kent voorkomt in dit spel en je hier bezwaar tegen hebt, sluit dan dit venster.</div>
+    <hr class="warn-divider">
+    <div class="warn-line dim">Door verder te gaan bevestig je dat je minimaal 13 jaar oud bent en akkoord gaat met de bovenstaande voorwaarden.</div>
+    <button class="warn-proceed-btn" onclick="proceedToMenu()">IK BEGRIJP HET — DOORGAAN<span class="blink"> ▶</span></button>
+    <div class="warn-err-code">FNAG_WARN_v1.0 · KELDER_DETENTIE_SYS · ERR_PROCEED_REQUIRED</div>
+  </div>
+</div>
+
 <!-- ════ START ════ -->
 <div id="startScreen">
   <canvas id="dripsCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0"></canvas>
-  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:20px 0">
-    <div class="start-eyebrow">Kelder Detentie — Nacht 1</div>
-    <div class="start-title">ONE NIGHT AT<br>MEESTER GIJS</div>
-    <div class="start-sub">A Night of Academic Detention</div>
-    <div class="lore-card">
-      <p>Je haalde een <strong>1</strong> voor het Engels proefwerk.<br><br>
-        Meester Gijs sloot je op in zijn <strong>kelder</strong>: donker, vochtig, levend.
-        Overleef tot <strong>6:00 AM</strong> — dan mag je naar huis.</p>
-      <div class="quote">"You will stay here until sunrise. If you cannot master the English language,
-        perhaps you will master the art of survival instead."</div>
-      <p>Er is ook een <strong>muziekkamer</strong>. Daar speelt altijd muziek.
-        Het <em>moet</em> blijven spelen. Je wilt er niet achter komen wat er gebeurt als hij stopt met spelen...</p>
-      <p class="warn">⚠ Zuurstof is schaars. Gesloten deuren, ventilatieschacht én camera's verbruiken O₂.<br>
-        ⚠ Hou de muziekdoos op CAM 6 opgewonden. Wacht niet te lang.<br>
-        ⚠ Maduro kan elk moment op een camera verschijnen. Kijk niet te lang.<br>
-        ⚠ [HARD] Diddy negeert deuren. Gebruik het camera-ALARM om hem terug te sturen.<br>
-        ⚠ [HARD] Chapo is immuun voor deuren. Gebruik ALARM om hem te resetten. ALARM cooldown: 20s.</p>
+  <div class="start-inner">
+    <div class="term-bar">
+      <div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div>
+      <div class="term-title-bar">KELDER_DETENTIE.EXE — BEVEILIGINGSSYSTEEM ACTIEF</div>
     </div>
-    <div class="mode-select">
-      <button class="mode-btn selected" id="easyModeBtn" onclick="selectMode('easy')">
-        <div class="mode-icon">😰</div>
-        <div class="mode-name">EASY MODE</div>
-        <div class="mode-desc">Gijs & Hobo Gijs<br>Normaal tempo<br>Deuren mild</div>
-      </button>
-      <button class="mode-btn" id="hardModeBtn" onclick="selectMode('hard')">
-        <div class="mode-icon">💀</div>
-        <div class="mode-name">HARD MODE</div>
-        <div class="mode-desc">+ Jeffrey (deurimmuum)<br>+ Chapo (deurimmuum)<br>+ Diddy (alarm vereist)<br>Agressiever AI</div>
-      </button>
+    <div class="term-window">
+      <div class="start-eyebrow">SYSTEEM GEÏNITIALISEERD — NACHT SELECTIE</div>
+      <div class="start-title">FIVE NIGHTS AT<br>MEESTER GIJS</div>
+      <div class="start-sub">Five Nights of Academic Detention<span class="blink">_</span></div>
+      <div class="lore-card" id="loreCard">
+        <p id="loreText">> Selecteer een nacht om dossier te laden<span class="blink">_</span></p>
+        <div class="quote" id="loreQuote">"You will stay here until sunrise."</div>
+        <p class="warn" id="loreWarn">⚠ Selecteer een nacht hieronder.</p>
+      </div>
+      <div class="night-select" id="nightSelect">
+        <button class="night-btn" id="nb1" onclick="selectNight(1)">
+          <div class="nb-num">N<span>1</span></div>
+          <div class="nb-title">DE KELDER</div>
+          <div class="nb-enemies">Hobo Gijs · Meester Gijs</div>
+          <div class="nb-diff diff-1">●○○○○</div>
+        </button>
+        <button class="night-btn" id="nb2" onclick="selectNight(2)">
+          <div class="nb-num">N<span>2</span></div>
+          <div class="nb-title">DE MUZIEKKAMER</div>
+          <div class="nb-enemies">+ Tumor Tom · Mark Rutte (vent)</div>
+          <div class="nb-diff diff-2">●●○○○</div>
+        </button>
+        <button class="night-btn" id="nb3" onclick="selectNight(3)">
+          <div class="nb-num">N<span>3</span></div>
+          <div class="nb-title">DE GANG</div>
+          <div class="nb-enemies">+ Jeffrey · Chapo</div>
+          <div class="nb-diff diff-3">●●●○○</div>
+        </button>
+        <button class="night-btn" id="nb4" onclick="selectNight(4)">
+          <div class="nb-num">N<span>4</span></div>
+          <div class="nb-title">DE KELDER DIEPT</div>
+          <div class="nb-enemies">+ Diddy</div>
+          <div class="nb-diff diff-4">●●●●○</div>
+        </button>
+        <button class="night-btn" id="nb5" onclick="selectNight(5)">
+          <div class="nb-num">N<span>5</span></div>
+          <div class="nb-title">HET EINDOORDEEL</div>
+          <div class="nb-enemies">Alle vijanden · MAX AI</div>
+          <div class="nb-diff diff-5">●●●●●</div>
+        </button>
+      </div>
+      <button class="start-btn" id="startBtn" disabled>SELECTEER EEN NACHT</button>
+      <div class="start-hint">koptelefoon aanbevolen · gebruik camera's en deuren om te overleven</div>
     </div>
-    <button class="start-btn" id="startBtn">▶ &nbsp; NACHT BEGINNEN</button>
-    <div class="start-hint">🎧 koptelefoon aanbevolen</div>
   </div>
 </div>
 
@@ -792,6 +986,7 @@ const FILES = {
   markAudio:    'Audio/Mark.mp3',
   shock:        'Audio/Shock.mp3',
   cameraAlarm:  'Audio/CameraAlarm.mp3',
+  menuMusic:    'Audio/Menu.mp3',
   gijsCam:      'Images/GijsCamera.png',
   gijsJS:       'Images/GijsJumpscare.png',
   patrickJS:    'Images/PatrickJumpscare.png',
@@ -883,15 +1078,100 @@ const GIJS_ALLOWED_CAMS  = [POS.C0,POS.C1,POS.C2,POS.C3,POS.C4];
 const HOBO_ALLOWED_CAMS  = [POS.C0,POS.C1,POS.C2,POS.C3,POS.C4];
 const MADURO_ALLOWED_CAMS= [0,1,2,3,4,5];
 
-/* ── MODE ── */
-let selectedMode = 'easy';
-function selectMode(mode){
-  selectedMode=mode;
-  document.getElementById('easyModeBtn').className='mode-btn'+(mode==='easy'?' selected':'');
-  document.getElementById('hardModeBtn').className='mode-btn'+(mode==='hard'?' hard-selected':'');
-  const btn=document.getElementById('startBtn');
-  if(mode==='hard'){btn.classList.add('hard-mode-btn');btn.textContent='💀  HARD MODE STARTEN';}
-  else{btn.classList.remove('hard-mode-btn');btn.textContent='▶   NACHT BEGINNEN';}
+/* ── MENU MUSIC ── */
+const menuAudio = new Audio(FILES.menuMusic);
+menuAudio.loop = true;
+menuAudio.volume = 0.5;
+
+function proceedToMenu(){
+  document.getElementById('warnScreen').style.display='none';
+  document.getElementById('startScreen').style.display='flex';
+  menuAudio.play().catch(()=>{});
+  animateStartBg();
+}
+
+function stopMenuMusic(){
+  menuAudio.pause();
+  menuAudio.currentTime=0;
+}
+const NIGHT_CONFIGS = {
+  1: {
+    label:'Nacht 1 · De Kelder',
+    lore:'Je haalde een <strong>1</strong> voor het Engels proefwerk. Meester Gijs sloot je op in zijn <strong>kelder</strong>. Overleef tot <strong>6:00 AM</strong>.',
+    quote:'"You will stay here until sunrise."',
+    warn:'⚠ Sluit deuren als Gijs nadert. ⚠ Zuurstof schaars bij gesloten deuren.',
+    gijsActive:true, hoboActive:true, tomActive:false, markRutteActive:false,
+    jeffreyActive:false, chapoActive:false, diddyActive:false,
+    maduroChance:0.02, shadowChance:0.003,
+    moveIval:[38000,28000,20000,14000,9000,6000],
+    hoboMinMs:7000, hoboMaxMs:25000,
+  },
+  2: {
+    label:'Nacht 2 · De Muziekkamer',
+    lore:'De muziek is begonnen. Iets in de muziekkamer <strong>wacht</strong> tot het stopt. En Mark Rutte kruipt door de <strong>ventilatieschacht</strong>.',
+    quote:'"Keep the music playing. No matter what."',
+    warn:'⚠ Wind de muziekdoos op via CAM 6. ⚠ Sluit de ventilatieschacht voor Mark Rutte.',
+    gijsActive:true, hoboActive:true, tomActive:true, markRutteActive:true,
+    jeffreyActive:false, chapoActive:false, diddyActive:false,
+    maduroChance:0.03, shadowChance:0.004,
+    moveIval:[30000,22000,15000,10000,7000,4500],
+    hoboMinMs:6000, hoboMaxMs:20000,
+  },
+  3: {
+    label:'Nacht 3 · De Gang',
+    lore:'Jeffrey slaapt niet. Hij loopt. En hij stopt nooit. Chapo wacht in de linker gang op zijn kans.',
+    quote:'"The doors will not save you from everything."',
+    warn:'⚠ Jeffrey negeert deuren — gebruik lure. ⚠ Chapo: sluit beide deuren bij alarm. ⚠ ALARM knop beschikbaar.',
+    gijsActive:true, hoboActive:true, tomActive:true, markRutteActive:true,
+    jeffreyActive:true, chapoActive:true, diddyActive:false,
+    maduroChance:0.04, shadowChance:0.005,
+    moveIval:[24000,17000,12000,8500,5500,3500],
+    hoboMinMs:4500, hoboMaxMs:16000,
+  },
+  4: {
+    label:'Nacht 4 · De Kelder Diept',
+    lore:'Diddy is er nu ook. Hij negeert deuren volledig. Gebruik het alarm en de lure slim.',
+    quote:'"There is no hiding anymore."',
+    warn:'⚠ Diddy negeert deuren — ALARM of lure. ⚠ Chapo is immuun voor deuren. ⚠ Alarm CD: 20s.',
+    gijsActive:true, hoboActive:true, tomActive:true, markRutteActive:true,
+    jeffreyActive:true, chapoActive:true, diddyActive:true,
+    maduroChance:0.05, shadowChance:0.006,
+    moveIval:[20000,14000,9500,6500,4500,3000],
+    hoboMinMs:3500, hoboMaxMs:13000,
+  },
+  5: {
+    label:'Nacht 5 · Het Eindoordeel',
+    lore:'Alle vijanden. Maximale AI. Er sluipt nog meer in het donker dan je denkt. <strong>Veel succes.</strong>',
+    quote:'"I told you to study. You didn\'t listen."',
+    warn:'⚠ ALLE vijanden actief. ⚠ MAX moeilijkheidsgraad. ⚠ Niet alles is wat het lijkt.',
+    gijsActive:true, hoboActive:true, tomActive:true, markRutteActive:true,
+    jeffreyActive:true, chapoActive:true, diddyActive:true,
+    maduroChance:0.09, shadowChance:0.012,
+    moveIval:[16000,11000,7500,5000,3200,2000],
+    hoboMinMs:2500, hoboMaxMs:9000,
+  },
+};
+
+let selectedNight = 0;
+
+function selectNight(n){
+  selectedNight = n;
+  const cfg = NIGHT_CONFIGS[n];
+  // Update lore card
+  document.getElementById('loreText').innerHTML = cfg.lore;
+  document.getElementById('loreQuote').textContent = cfg.quote;
+  document.getElementById('loreWarn').innerHTML = cfg.warn;
+  document.getElementById('loreCard').style.borderTopColor = n===5?'#ff6600':'#550000';
+  // Update buttons
+  for(let i=1;i<=5;i++){
+    const btn=document.getElementById('nb'+i);
+    btn.className='night-btn'+(i===n?(n===5?' night5-sel':' selected'):'');
+  }
+  // Start button
+  const sb=document.getElementById('startBtn');
+  sb.disabled=false;
+  sb.className='start-btn'+(n===5?' night5-btn':'');
+  sb.textContent=`▶  NACHT ${n} STARTEN`;
 }
 
 /* ── STATE ── */
@@ -900,9 +1180,10 @@ const SFX={};
 let glitchActive=false,glitchTimer=null;
 
 function mkState(){
-  const hard=selectedMode==='hard';
+  const n = selectedNight || 1;
+  const cfg = NIGHT_CONFIGS[n];
   return{
-    running:false,nightStart:0,hour:0,hardMode:hard,
+    running:false,nightStart:0,hour:0,night:n,cfg:cfg,
     o2:100,o2Dead:false,
     lfClosed:false,rtClosed:false,
     ventClosed:false,
@@ -919,17 +1200,17 @@ function mkState(){
     jeffreyStep:0,
     jeffreyPos:JEFFREY_START_POS,
     jeffreyTimer:JEFFREY_SWITCH_S,
-    jeffreyActive:hard,
-    // Chapo — now immune to doors
+    jeffreyActive:cfg.jeffreyActive,
+    // Chapo — immune to doors
     chapoTimer:CHAPO_ATTACK_S,
     chapoSprite:0,
     chapoAlarm:false,
-    chapoActive:hard,
+    chapoActive:cfg.chapoActive,
     chapoKillTimer:null,
     // Diddy
     diddyPos:POS.C0,
     diddyMoveTimer:null,
-    diddyActive:hard,
+    diddyActive:cfg.diddyActive,
     diddyPath:null,
     // Camera Alarm
     alarmReady:false,
@@ -1237,7 +1518,7 @@ function switchCam(id){
   document.getElementById('camNameLbl').textContent=CAMS[id].name;
   document.getElementById('camRoomLbl').textContent=CAMS[id].room;
   const mbp=document.getElementById('musicBoxPanel');
-  mbp.style.display=id===MUSIC_CAM_ID?'flex':'none';
+  mbp.style.display=(id===MUSIC_CAM_ID&&G.cfg.tomActive)?'flex':'none';
   if(SFX.muziek) SFX.muziek.volume=id===MUSIC_CAM_ID?0.55:0.15;
   renderCamFeed();
   updateLureUI();
@@ -1261,7 +1542,7 @@ function renderCamFeed(){
   const hoboHere   = G.hoboPos===id&&id!==MUSIC_CAM_ID;
   const jeffreyHere= G.jeffreyActive&&G.jeffreyPos===id&&id!==MUSIC_CAM_ID;
   const chapoHere  = G.chapoActive&&id===CHAPO_CAM_ID&&!G.chapoAlarm;
-  const tomHere    = id===MUSIC_CAM_ID;
+  const tomHere    = G.cfg.tomActive&&id===MUSIC_CAM_ID;
   const maduroHere = G.maduroPos===id;
   const diddyHere  = G.diddyActive&&G.diddyPos===id&&id!==MUSIC_CAM_ID;
 
@@ -1481,7 +1762,7 @@ function scheduleMaduroSpawn(){
   G.maduroSpawnTimer=setInterval(()=>{
     if(G.dead||G.won) return;
     if(G.maduroPos>=0) return;
-    if(Math.random()<MADURO_APPEAR_CHANCE){
+    if(Math.random()<G.cfg.maduroChance){
       const available=MADURO_ALLOWED_CAMS.filter(id=>!isCamDisabled(id));
       if(available.length===0) return;
       const camId=available[Math.floor(Math.random()*available.length)];
@@ -1826,7 +2107,7 @@ function refreshDoorLights(){
 function scheduleMoveTimer(){
   if(G.mMoveTimer) clearTimeout(G.mMoveTimer);
   if(G.dead||G.won) return;
-  const intervals=G.hardMode?MOVE_IVAL_HARD:MOVE_IVAL_EASY;
+  const intervals=G.cfg.moveIval;
   const base=intervals[Math.min(G.hour,5)];
   const delay=base+Math.random()*4000-1500;
   G.mMoveTimer=setTimeout(()=>{advanceMonster();scheduleMoveTimer();},delay);
@@ -1883,8 +2164,8 @@ function armDoorTimer(){
 function scheduleHoboMove(){
   if(G.hoboMoveTimer) clearTimeout(G.hoboMoveTimer);
   if(G.dead||G.won) return;
-  const minMs=G.hardMode?HOBO_MIN_MS_HARD:HOBO_MIN_MS_EASY;
-  const maxMs=G.hardMode?HOBO_MAX_MS_HARD:HOBO_MAX_MS_EASY;
+  const minMs=G.cfg.hoboMinMs;
+  const maxMs=G.cfg.hoboMaxMs;
   const delay=minMs+Math.random()*(maxMs-minMs);
   G.hoboMoveTimer=setTimeout(()=>{moveHobo();scheduleHoboMove();},delay);
 }
@@ -1976,7 +2257,7 @@ function useLure(){
 // Triggered when camera is closed. 0.5% chance per tick (400ms).
 function tickShadowGijs(){
   if(G.dead||G.won||G.camOpen||G.shadowActive) return;
-  if(Math.random()<0.005) shadowGijsAppear();
+  if(Math.random()<G.cfg.shadowChance) shadowGijsAppear();
 }
 
 function shadowGijsAppear(){
@@ -2013,7 +2294,7 @@ function triggerShadowGijsJS(){
   const img=document.getElementById('shadowGijsOfficeImg');
   img.style.display='none';
   G.shadowActive=false;
-  doJumpscare(FILES.shadowGijsJS,'Shadow Gijs heeft je gevangen.<br><em>"Je had moeten kijken."</em>','shadowGijsAudio');
+  doJumpscare(FILES.shadowGijsJS,'Shadow Gijs heeft je gevangen.<br><em>"Je had weg moeten kijken..."</em>','shadowGijsAudio');
 }
 
 function gameTick(){
@@ -2056,7 +2337,7 @@ function oxygenDepleted(){
 
 /* ════ MUSIC BOX TICK ════ */
 function tickMusicBox(){
-  if(G.dead||G.won) return;
+  if(G.dead||G.won||!G.cfg.tomActive) return;
   if(G.isWindingUp&&G.camOpen&&G.curCam===MUSIC_CAM_ID){
     G.musicBox=Math.min(100,G.musicBox+MB_WIND_RATE);
   } else {
@@ -2218,6 +2499,8 @@ function killTimers(){
 
 /* ════ START / RESTART ════ */
 function startGame(){
+  if(!selectedNight) return;
+  stopMenuMusic();
   G=mkState();G.nightStart=Date.now();G.running=true;
   glitchActive=false;
 
@@ -2253,17 +2536,22 @@ function startGame(){
   ['dbL','dbR'].forEach(id=>{const b=document.getElementById(id);b.textContent='DEUR';b.classList.remove('on');});
   ['dlL','dlR'].forEach(id=>document.getElementById(id).className='d-light');
 
-  const isHard=G.hardMode;
-  document.getElementById('dotJeffrey').style.display=isHard?'':'none';
-  document.getElementById('jeffreyLabel').style.display=isHard?'':'none';
-  document.getElementById('dotChapo').style.display=isHard?'':'none';
-  document.getElementById('chapoLabel').style.display=isHard?'':'none';
-  document.getElementById('dotDiddy').style.display=isHard?'':'none';
-  document.getElementById('diddyLabel').style.display=isHard?'':'none';
-  document.getElementById('nightModeLbl').textContent=isHard?'Nacht 1 · HARD MODE · Kelder Detentie':'Nacht 1 · Kelder Detentie';
+  const cfg=G.cfg;
+  const showJeffrey=cfg.jeffreyActive;
+  const showChapo=cfg.chapoActive;
+  const showDiddy=cfg.diddyActive;
+  document.getElementById('dotJeffrey').style.display=showJeffrey?'':'none';
+  document.getElementById('jeffreyLabel').style.display=showJeffrey?'':'none';
+  document.getElementById('dotChapo').style.display=showChapo?'':'none';
+  document.getElementById('chapoLabel').style.display=showChapo?'':'none';
+  document.getElementById('dotDiddy').style.display=showDiddy?'':'none';
+  document.getElementById('diddyLabel').style.display=showDiddy?'':'none';
+  document.getElementById('nightModeLbl').textContent=cfg.label;
 
   initAudio();play('ambience');
-  if(SFX.muziek){SFX.muziek.volume=0.15;SFX.muziek.playbackRate=1;SFX.muziek.play().catch(()=>{});}
+  if(cfg.tomActive){
+    if(SFX.muziek){SFX.muziek.volume=0.15;SFX.muziek.playbackRate=1;SFX.muziek.play().catch(()=>{});}
+  }
 
   drawOffice();
   buildCamStrip();
@@ -2288,24 +2576,30 @@ function startGame(){
   G.hoboPos=HOBO_ALLOWED_CAMS[Math.floor(Math.random()*HOBO_ALLOWED_CAMS.length)];
   scheduleHoboMove();
   G.fireOn=false;
-  scheduleMarkCheck();
+  if(cfg.markRutteActive) scheduleMarkCheck();
   scheduleMaduroSpawn();
 
-  if(G.hardMode){
+  if(cfg.jeffreyActive){
     G.jeffreyStep=0;
     G.jeffreyPos=JEFFREY_PATH[0];
     G.jeffreyTimer=JEFFREY_SWITCH_S;
-    // Start Diddy
+  }
+  if(cfg.diddyActive){
     G.diddyPos=POS.C0;
     G.diddyPath=null;
-    setTimeout(scheduleDiddyMove, 8000); // Slight delay before Diddy starts
-    refreshMonsterDots();
+    setTimeout(scheduleDiddyMove, 8000);
   }
+  refreshMonsterDots();
 }
 
 function restartGame(){
   ['deathScreen','winScreen'].forEach(id=>document.getElementById(id).style.display='none');
-  startGame();
+  document.getElementById('startScreen').style.display='flex';
+  menuAudio.play().catch(()=>{});
+  selectedNight=0;
+  for(let i=1;i<=5;i++) document.getElementById('nb'+i).className='night-btn';
+  const sb=document.getElementById('startBtn');
+  sb.disabled=true;sb.className='start-btn';sb.textContent='SELECTEER EEN NACHT';
 }
 
 /* ════ START SCREEN ════ */
@@ -2352,7 +2646,6 @@ window.addEventListener('resize',()=>{
 document.getElementById('startBtn').addEventListener('click',startGame);
 window.addEventListener('load',()=>{
   animateStartBg();
-  selectMode('easy');
   Object.values(FILES).forEach(src=>{const i=new Image();i.src=src;});
   CAM_BG_KEYS.forEach((key,id)=>getCamBgImg(id,()=>{}));
 });
