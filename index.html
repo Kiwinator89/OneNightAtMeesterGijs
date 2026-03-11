@@ -837,8 +837,34 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 @keyframes btnAnimCustom{0%,100%{box-shadow:0 0 4px #44220022}50%{box-shadow:0 0 16px #88440066}}
 
 /* ══ CUSTOM NIGHT SLIDERS ══ */
-.cn-row{display:flex;flex-direction:column;gap:4px;padding:8px 10px;background:rgba(4,0,0,.6);border:1px solid #1a0a00}
-.cn-label{font-size:clamp(.45rem,.75vw,.6rem);color:#cc7700;letter-spacing:3px;text-transform:uppercase;font-family:'Share Tech Mono',monospace}
+.cn-row{
+  display:flex;flex-direction:column;gap:5px;padding:8px 10px;
+  background:rgba(4,0,0,.6);border:1px solid #1a0a00;
+  position:relative;overflow:hidden;
+}
+.cn-row:hover{border-color:#330000;background:rgba(8,0,0,.8)}
+/* character portrait in top-right corner */
+.cn-portrait{
+  position:absolute;top:0;right:0;
+  width:44px;height:54px;
+  object-fit:cover;object-position:top center;
+  filter:brightness(0.45) contrast(1.6) saturate(0.4) sepia(0.3);
+  -webkit-mask-image:linear-gradient(to left, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+  mask-image:linear-gradient(to left, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+  pointer-events:none;
+  transition:filter .3s;
+}
+.cn-row:hover .cn-portrait{filter:brightness(0.7) contrast(1.5) saturate(0.6) sepia(0.2)}
+/* level-based portrait intensity */
+.cn-row.lvl-active .cn-portrait{filter:brightness(0.6) contrast(1.5) saturate(0.5) sepia(0.2)}
+.cn-row.lvl-danger .cn-portrait{filter:brightness(0.75) contrast(1.4) saturate(0.8) sepia(0.1);animation:portraitFlicker 2s infinite}
+.cn-row.lvl-max .cn-portrait{filter:brightness(0.9) contrast(1.3) saturate(1.2);animation:portraitFlicker .6s infinite}
+@keyframes portraitFlicker{0%,100%{opacity:1}50%{opacity:.7}}
+.cn-label{
+  font-size:clamp(.45rem,.75vw,.6rem);color:#cc7700;letter-spacing:3px;
+  text-transform:uppercase;font-family:'Share Tech Mono',monospace;
+  padding-right:46px;/* leave space for portrait */
+}
 .cn-ctrl{display:flex;align-items:center;gap:5px}
 .cn-btn{background:#0a0500;border:1px solid #330000;color:#880000;
   width:20px;height:20px;font-family:'VT323',monospace;font-size:.9rem;
@@ -948,7 +974,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 16px;">
           <!-- Gijs -->
           <div class="cn-row">
-            <div class="cn-label">⚠ Meester Gijs</div>
+            <img class="cn-portrait" src="Images/GijsCamera.png" alt="">
+            <div class="cn-label">Meester Gijs</div>
             <div class="cn-ctrl">
               <button class="cn-btn" onclick="setCustomLevel('gijs',customLevels.gijs-1)">−</button>
               <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_gijs"></div></div>
@@ -959,7 +986,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
           </div>
           <!-- Hobo Gijs -->
           <div class="cn-row">
-            <div class="cn-label">👤 Hobo Gijs</div>
+            <img class="cn-portrait" src="Images/HoboGijsCamera.png" alt="">
+            <div class="cn-label">Hobo Gijs</div>
             <div class="cn-ctrl">
               <button class="cn-btn" onclick="setCustomLevel('hobo',customLevels.hobo-1)">−</button>
               <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_hobo"></div></div>
@@ -970,7 +998,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
           </div>
           <!-- Tumor Tom -->
           <div class="cn-row">
-            <div class="cn-label">🎵 Tumor Tom</div>
+            <img class="cn-portrait" src="Images/TomCamera.png" alt="">
+            <div class="cn-label">Tumor Tom</div>
             <div class="cn-ctrl">
               <button class="cn-btn" onclick="setCustomLevel('tom',customLevels.tom-1)">−</button>
               <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_tom"></div></div>
@@ -981,7 +1010,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
           </div>
           <!-- Mark Rutte -->
           <div class="cn-row">
-            <div class="cn-label">🪟 Mark Rutte</div>
+            <img class="cn-portrait" src="Images/MarkVent.png" alt="">
+            <div class="cn-label">Mark Rutte</div>
             <div class="cn-ctrl">
               <button class="cn-btn" onclick="setCustomLevel('mark',customLevels.mark-1)">−</button>
               <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_mark"></div></div>
@@ -992,7 +1022,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
           </div>
           <!-- Maduro -->
           <div class="cn-row">
-            <div class="cn-label">📡 Maduro</div>
+            <img class="cn-portrait" src="Images/MaduroCamera.png" alt="">
+            <div class="cn-label">Maduro</div>
             <div class="cn-ctrl">
               <button class="cn-btn" onclick="setCustomLevel('maduro',customLevels.maduro-1)">−</button>
               <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_maduro"></div></div>
@@ -1003,7 +1034,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
           </div>
           <!-- Jeffrey -->
           <div class="cn-row">
-            <div class="cn-label">🚶 Jeffrey</div>
+            <img class="cn-portrait" src="Images/JeffreyCamera.png" alt="">
+            <div class="cn-label">Jeffrey</div>
             <div class="cn-ctrl">
               <button class="cn-btn" onclick="setCustomLevel('jeffrey',customLevels.jeffrey-1)">−</button>
               <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_jeffrey"></div></div>
@@ -1014,7 +1046,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
           </div>
           <!-- Chapo -->
           <div class="cn-row">
-            <div class="cn-label">🔫 Chapo</div>
+            <img class="cn-portrait" src="Images/ChapoCamera.png" alt="">
+            <div class="cn-label">Chapo</div>
             <div class="cn-ctrl">
               <button class="cn-btn" onclick="setCustomLevel('chapo',customLevels.chapo-1)">−</button>
               <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_chapo"></div></div>
@@ -1025,7 +1058,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
           </div>
           <!-- Diddy -->
           <div class="cn-row">
-            <div class="cn-label">🎤 Diddy</div>
+            <img class="cn-portrait" src="Images/DiddyCamera.png" alt="">
+            <div class="cn-label">Diddy</div>
             <div class="cn-ctrl">
               <button class="cn-btn" onclick="setCustomLevel('diddy',customLevels.diddy-1)">−</button>
               <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_diddy"></div></div>
@@ -1036,7 +1070,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
           </div>
           <!-- Shadow Gijs -->
           <div class="cn-row">
-            <div class="cn-label">👻 Shadow Gijs</div>
+            <img class="cn-portrait" src="Images/ShadowGijsOffice.png" alt="">
+            <div class="cn-label">Shadow Gijs</div>
             <div class="cn-ctrl">
               <button class="cn-btn" onclick="setCustomLevel('shadow',customLevels.shadow-1)">−</button>
               <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_shadow"></div></div>
@@ -1546,7 +1581,6 @@ function setCustomLevel(char, val){
   if(display) display.textContent = val;
   if(bar){
     bar.style.width = (val/20*100)+'%';
-    // color based on level
     if(val===0) bar.style.background='#1a1a1a';
     else if(val<=5) bar.style.background='linear-gradient(90deg,#1a3a0a,#3a8a0a)';
     else if(val<=10) bar.style.background='linear-gradient(90deg,#5a5a00,#aaaa00)';
@@ -1559,6 +1593,14 @@ function setCustomLevel(char, val){
     const labels=['INACTIEF','SLUIMERT','RUSTIG','TRAAG','LAAG','GEMIDDELD','ACTIEF','ACTIEF','HOOG','HOOG','GEVAARLIJK','GEVAARLIJK','AGRESSIEF','AGRESSIEF','ZEER AGRESSIEF','ZEER AGRESSIEF','KRITIEK','KRITIEK','LETHAL','LETHAL','MAX'];
     lbl.textContent = labels[val]||'MAX';
     lbl.style.color = val===0?'#333':val<=5?'#3a8a0a':val<=10?'#aaaa00':val<=15?'#ff6600':'#ff0000';
+  }
+  // Update portrait row intensity class
+  const row = document.getElementById('ci_'+char)?.closest('.cn-row');
+  if(row){
+    row.classList.remove('lvl-active','lvl-danger','lvl-max');
+    if(val>=16) row.classList.add('lvl-max');
+    else if(val>=11) row.classList.add('lvl-danger');
+    else if(val>=1) row.classList.add('lvl-active');
   }
 }
 
