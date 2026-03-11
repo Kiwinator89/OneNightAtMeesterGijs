@@ -64,7 +64,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 }
 .warn-line.accent{color:#ff4444;font-size:clamp(.65rem,1.2vw,.85rem)}
 .warn-line.dim{color:#552222;font-size:clamp(.52rem,.9vw,.65rem)}
-.warn-line.fullscreen{color:#ffaa33;font-size:clamp(.62rem,1.05vw,.78rem);border-left-color:#664400;}
+.warn-line.fullscreen{color:#ff8800;font-size:clamp(.62rem,1.1vw,.78rem);border-left-color:#663300;}
 .warn-divider{border:none;border-top:1px solid #330000;margin:18px 0}
 .warn-proceed-btn{
   display:block;width:100%;margin-top:24px;
@@ -103,10 +103,123 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
   animation:cornerFlicker 4s ease-in-out infinite;
 }
 @keyframes cornerFlicker{0%,100%{opacity:1}45%{opacity:.6}46%{opacity:1}47%{opacity:.4}48%{opacity:1}}
-.start-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:16px 0;width:100%;min-height:100vh;justify-content:center;}
+.start-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:24px 0;width:100%}
+
+/* ══ GIJS GLITCH HERO ══ */
+#gijsHero{
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+#gijsHero::before{
+  content:'';position:absolute;inset:0;z-index:2;
+  background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 0%,rgba(0,0,0,.82) 65%,rgba(0,0,0,.97) 100%);
+}
+#gijsHeroImg{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:min(520px,72vw);
+  height:auto;
+  opacity:0.18;
+  filter:brightness(0.5) contrast(2.5) saturate(0.3) hue-rotate(330deg);
+  animation:gijsGlitchMain 3s infinite;
+  mix-blend-mode:screen;
+}
+@keyframes gijsGlitchMain{
+  0%,87%,100%{
+    filter:brightness(0.5) contrast(2.5) saturate(0.3) hue-rotate(330deg);
+    transform:translate(-50%,-50%) scale(1);
+    opacity:0.18;
+  }
+  88%{
+    filter:brightness(1.2) contrast(4) saturate(6) hue-rotate(0deg);
+    transform:translate(calc(-50% + 12px),-50%) scale(1.02) skewX(-3deg);
+    opacity:0.65;
+  }
+  89%{
+    filter:brightness(0.3) contrast(5) saturate(0) hue-rotate(180deg);
+    transform:translate(calc(-50% - 8px),-50%) scale(0.99) skewX(2deg);
+    opacity:0.5;
+  }
+  90%{
+    filter:brightness(1.4) contrast(3) saturate(8) hue-rotate(60deg);
+    transform:translate(-50%,-50%) scale(1.04);
+    opacity:0.72;
+  }
+  91%{
+    filter:brightness(0.5) contrast(2.5) saturate(0.3) hue-rotate(330deg);
+    transform:translate(-50%,-50%) scale(1);
+    opacity:0.18;
+  }
+  95%{
+    filter:brightness(0.8) contrast(3) saturate(2) hue-rotate(200deg);
+    transform:translate(calc(-50% + 4px),calc(-50% - 3px)) scale(1.01);
+    opacity:0.32;
+  }
+  96%{
+    filter:brightness(0.5) contrast(2.5) saturate(0.3) hue-rotate(330deg);
+    transform:translate(-50%,-50%) scale(1);
+    opacity:0.18;
+  }
+}
+/* RGB split ghost */
+#gijsHeroImg::before{content:none}
+.gijs-ghost{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:min(520px,72vw);
+  height:auto;
+  pointer-events:none;
+  animation:gijsGhostAnim 3s infinite;
+  mix-blend-mode:screen;
+}
+.gijs-ghost.red{
+  filter:brightness(0.4) contrast(3) saturate(0) sepia(1) hue-rotate(320deg);
+  opacity:0;
+  animation:gijsGhostR 3s infinite;
+}
+.gijs-ghost.cyan{
+  filter:brightness(0.4) contrast(3) saturate(0) sepia(1) hue-rotate(160deg);
+  opacity:0;
+  animation:gijsGhostC 3s infinite;
+}
+@keyframes gijsGhostR{
+  0%,87%,92%,100%{opacity:0;transform:translate(calc(-50% + 0px),-50%)}
+  88%{opacity:0.3;transform:translate(calc(-50% + 16px),-50%)}
+  89%{opacity:0.2;transform:translate(calc(-50% - 10px),-50%)}
+  90%,91%{opacity:0.25;transform:translate(calc(-50% + 8px),-50%)}
+}
+@keyframes gijsGhostC{
+  0%,87%,92%,100%{opacity:0;transform:translate(calc(-50% + 0px),-50%)}
+  88%{opacity:0.3;transform:translate(calc(-50% - 16px),-50%)}
+  89%{opacity:0.2;transform:translate(calc(-50% + 10px),-50%)}
+  90%,91%{opacity:0.25;transform:translate(calc(-50% - 8px),-50%)}
+}
+/* Scan bar that sweeps over Gijs */
+.gijs-scanbar{
+  position:absolute;
+  left:0;right:0;
+  height:3px;
+  background:rgba(255,0,0,0.15);
+  top:0;
+  animation:gijsScanbar 6s linear infinite;
+  z-index:3;
+  pointer-events:none;
+}
+@keyframes gijsScanbar{
+  0%{top:-10px;opacity:0}
+  5%{opacity:1}
+  95%{opacity:0.3}
+  100%{top:100%;opacity:0}
+}
+
 /* Terminal header bar */
 .term-bar{
-  width:min(820px,96vw);
+  width:min(820px,95vw);
   background:#0a0000;border:1px solid #1a0000;border-bottom:2px solid #330000;
   padding:6px 14px;display:flex;align-items:center;gap:8px;margin-bottom:0;
 }
@@ -115,72 +228,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 .term-title-bar{flex:1;text-align:center;font-size:.55rem;color:#331111;letter-spacing:5px}
 /* Main terminal window */
 .term-window{
-  width:min(820px,96vw);
+  width:min(820px,95vw);
   background:#020000;border:1px solid #1a0000;border-top:none;
-  padding:28px 36px 26px;margin-bottom:14px;
+  padding:32px 36px 26px;margin-bottom:14px;
   position:relative;overflow:hidden;
 }
 .term-window::before{
   content:'';position:absolute;inset:0;
   background:repeating-linear-gradient(0deg,rgba(255,0,0,.015) 0px,rgba(255,0,0,.015) 1px,transparent 1px,transparent 4px);
   pointer-events:none;
-}
-/* ══ GIJS GLITCH IMAGE ══ */
-.menu-gijs-wrap{
-  display:flex;justify-content:center;align-items:center;
-  margin-bottom:18px;position:relative;height:min(220px,22vw);
-  overflow:hidden;
-}
-.menu-gijs-img{
-  height:100%;max-width:55%;object-fit:contain;
-  filter:brightness(.7) contrast(1.5) saturate(.4) sepia(.3);
-  animation:menuGijsGlitch 2.5s infinite;
-  position:relative;z-index:2;
-}
-@keyframes menuGijsGlitch{
-  0%,88%,100%{
-    filter:brightness(.7) contrast(1.5) saturate(.4) sepia(.3);
-    transform:none;clip-path:none;
-  }
-  89%{
-    filter:brightness(1.4) contrast(2) saturate(4) hue-rotate(80deg);
-    transform:translateX(-8px) skewX(-4deg);
-    clip-path:inset(20% 0 40% 0);
-  }
-  90%{
-    filter:brightness(.3) contrast(3) saturate(8) hue-rotate(180deg);
-    transform:translateX(12px) skewX(2deg) scaleY(1.02);
-    clip-path:inset(60% 0 10% 0);
-  }
-  91%{
-    filter:brightness(1.6) contrast(1.8) saturate(6) hue-rotate(300deg);
-    transform:translateX(-5px) scaleX(1.04);
-    clip-path:inset(5% 0 70% 0);
-  }
-  92%{
-    filter:brightness(.7) contrast(1.5) saturate(.4) sepia(.3);
-    transform:translateX(3px);
-    clip-path:inset(40% 0 25% 0);
-  }
-  93%{
-    filter:brightness(.7) contrast(1.5) saturate(.4) sepia(.3);
-    transform:none;clip-path:none;
-  }
-}
-.menu-gijs-scanlines{
-  position:absolute;inset:0;pointer-events:none;z-index:3;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,.15) 0px,rgba(0,0,0,.15) 1px,transparent 1px,transparent 3px);
-}
-.menu-gijs-glitch-bar{
-  position:absolute;left:0;right:0;height:6px;background:rgba(255,0,0,.18);z-index:4;pointer-events:none;
-  animation:gijsGlitchBar 2.5s infinite;top:40%;
-}
-@keyframes gijsGlitchBar{
-  0%,87%,94%,100%{opacity:0;transform:translateY(0)}
-  89%{opacity:1;transform:translateY(-20px)}
-  90%{opacity:.7;transform:translateY(30px)}
-  91%{opacity:1;transform:translateY(-5px)}
-  92%{opacity:0}
 }
 .start-eyebrow{
   font-size:clamp(.45rem,.75vw,.6rem);color:#330000;letter-spacing:8px;
@@ -189,10 +245,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 .start-eyebrow::before{content:'> ';color:#550000}
 .start-title{
   font-family:'Creepster',cursive;
-  font-size:clamp(2.5rem,8vw,5.8rem);color:#cc0000;line-height:1;
+  font-size:clamp(2.8rem,9vw,6.4rem);color:#cc0000;line-height:1;
   text-align:center;letter-spacing:3px;
   text-shadow:0 0 40px #ff000055,0 0 80px #ff000022,2px 2px 0 #3a0000;
-  animation:titleGlitch 5s infinite;margin-bottom:6px;
+  animation:titleGlitch 5s infinite;margin-bottom:8px;
 }
 @keyframes titleGlitch{
   0%,92%,100%{text-shadow:0 0 40px #ff000055,2px 2px 0 #3a0000;transform:none}
@@ -202,8 +258,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 }
 .start-sub{
   font-family:'VT323',monospace;
-  font-size:clamp(.9rem,2.2vw,1.5rem);
-  color:#330000;letter-spacing:6px;margin-bottom:24px;text-align:center;
+  font-size:clamp(1rem,2.4vw,1.6rem);
+  color:#330000;letter-spacing:6px;margin-bottom:28px;text-align:center;
 }
 /* Lore card — terminal file readout */
 .lore-card{
@@ -215,20 +271,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
   background:#020000;padding:0 6px;font-size:.5rem;color:#330000;letter-spacing:5px;
   font-family:'Share Tech Mono',monospace;
 }
-.lore-card p{color:#664444;font-size:clamp(.6rem,.95vw,.75rem);line-height:1.9;font-family:'Share Tech Mono',monospace;}
+.lore-card p{color:#664444;font-size:clamp(.6rem,.95vw,.72rem);line-height:1.9;font-family:'Share Tech Mono',monospace;}
 .lore-card strong{color:#cc4444}
 .lore-card .quote{
   border-left:2px solid #330000;padding:8px 12px;margin:12px 0;
-  font-style:italic;color:#663333;font-size:clamp(.58rem,.88vw,.7rem);
+  font-style:italic;color:#663333;font-size:clamp(.58rem,.88vw,.68rem);
   font-family:'Share Tech Mono',monospace;
 }
-.lore-card .warn{color:#442222;font-size:.7em;margin-top:10px;opacity:.75;font-family:'Share Tech Mono',monospace;}
+.lore-card .warn{color:#442222;font-size:.65em;margin-top:10px;opacity:.75;font-family:'Share Tech Mono',monospace;}
 /* start hint */
-.start-hint{margin-top:14px;font-size:.55rem;color:#1a0000;letter-spacing:4px;font-family:'Share Tech Mono',monospace}
+.start-hint{margin-top:14px;font-size:.52rem;color:#1a0000;letter-spacing:4px;font-family:'Share Tech Mono',monospace}
 .start-hint::before{content:'// '}
 
 /* ══ NIGHT SELECT — terminal style ══ */
-.night-select{display:flex;gap:8px;margin-bottom:18px;max-width:min(820px,96vw);width:100%}
+.night-select{display:flex;gap:8px;margin-bottom:18px;max-width:min(820px,95vw);width:100%}
 .night-btn{
   flex:1;background:#000;
   border:1px solid #1a0000;color:#330000;
@@ -267,7 +323,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 /* Start button — terminal execute style */
 .start-btn{
   background:#000;border:1px solid #660000;color:#880000;
-  padding:14px 60px;font-family:'VT323',monospace;font-size:clamp(1.1rem,2.5vw,1.7rem);
+  padding:14px 60px;font-family:'VT323',monospace;font-size:clamp(1.1rem,2.4vw,1.7rem);
   letter-spacing:6px;text-transform:uppercase;cursor:pointer;transition:all .2s;
   animation:btnAnim 2s ease-in-out infinite;position:relative;overflow:hidden;
 }
@@ -766,6 +822,40 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 /* ══ SHADOW GIJS ══ */
 @keyframes shadowGijsFade{from{opacity:0}to{opacity:1}}
 @keyframes shadowGijsPulse{0%,100%{opacity:.85}50%{opacity:1}}
+
+/* ══ CUSTOM NIGHT BUTTON ══ */
+.night-custom-sel{
+  border-color:#cc8800!important;color:#ffaa00!important;
+  background:rgba(200,120,0,.08)!important;
+  box-shadow:0 0 20px #88440033!important;
+}
+.night-custom-sel::after{transform:scaleX(1)!important;background:#cc8800!important}
+.night-custom-sel .nb-num,.night-custom-sel .nb-num span{color:#ffaa00!important}
+.start-btn.night-custom-btn{border-color:#cc8800;color:#cc8800;animation:btnAnimCustom 2s ease-in-out infinite}
+.start-btn.night-custom-btn:not(:disabled)::after{background:#cc8800}
+.start-btn.night-custom-btn:not(:disabled):hover{box-shadow:0 0 24px #88440055}
+@keyframes btnAnimCustom{0%,100%{box-shadow:0 0 4px #44220022}50%{box-shadow:0 0 16px #88440066}}
+
+/* ══ CUSTOM NIGHT SLIDERS ══ */
+.cn-row{display:flex;flex-direction:column;gap:4px;padding:8px 10px;background:rgba(4,0,0,.6);border:1px solid #1a0a00}
+.cn-label{font-size:clamp(.45rem,.75vw,.6rem);color:#cc7700;letter-spacing:3px;text-transform:uppercase;font-family:'Share Tech Mono',monospace}
+.cn-ctrl{display:flex;align-items:center;gap:5px}
+.cn-btn{background:#0a0500;border:1px solid #330000;color:#880000;
+  width:20px;height:20px;font-family:'VT323',monospace;font-size:.9rem;
+  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  transition:all .1s;padding:0;line-height:1}
+.cn-btn:hover{background:#220000;border-color:#880000;color:#ff2200}
+.cn-bar-wrap{flex:1;height:8px;background:#0a0500;border:1px solid #1a0a00;border-radius:1px;overflow:hidden}
+.cn-bar-fill{height:100%;width:0%;border-radius:1px;transition:width .15s,background .2s;background:#1a3a0a}
+.cn-input{width:34px;background:#0a0500;border:1px solid #1a0a00;color:#cc7700;
+  font-family:'VT323',monospace;font-size:.9rem;text-align:center;padding:1px 2px;
+  -moz-appearance:textfield}
+.cn-input::-webkit-inner-spin-button,.cn-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.cn-input:focus{outline:none;border-color:#664400}
+.cn-val-row{display:flex;justify-content:space-between;align-items:center}
+.cn-num{font-family:'VT323',monospace;font-size:.95rem;color:#cc7700;letter-spacing:2px}
+.cn-lbl{font-size:.45rem;letter-spacing:2px;font-family:'Share Tech Mono',monospace}
+
 </style>
 </head>
 <body>
@@ -779,10 +869,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
     <div class="warn-line accent">Dit spel bevat frequente jumpscares en harde geluiden.</div>
     <div class="warn-line">Spelen met koptelefoon wordt aanbevolen maar doe dit op eigen risico.</div>
     <hr class="warn-divider">
-    <div class="warn-line fullscreen">🖥 Voor de beste ervaring: speel dit spel in <strong>volledig scherm</strong> (druk op F11 of gebruik de browserinstelling).</div>
-    <hr class="warn-divider">
-    <div class="warn-line">Dit spel is een satirische horror-parodie gebaseerd op publieke figuren. De personages en situaties zijn volledig fictief en uitsluitend bedoeld als humor.</div>
+    <div class="warn-line">Dit spel is een satirische horror-parodie gebaseerd op publieke figuren en bekende namen. De personages en situaties zijn volledig fictief en puur bedoeld als humor.</div>
     <div class="warn-line dim">Als jij of iemand die je kent voorkomt in dit spel en je hier bezwaar tegen hebt, sluit dan dit venster.</div>
+    <hr class="warn-divider">
+    <div class="warn-line fullscreen">🖥 Voor de beste ervaring: speel dit spel in <strong>volledig scherm</strong> (druk op F11 of gebruik de browseropties).</div>
     <hr class="warn-divider">
     <div class="warn-line dim">Door verder te gaan bevestig je dat je minimaal 13 jaar oud bent en akkoord gaat met de bovenstaande voorwaarden.</div>
     <button class="warn-proceed-btn" onclick="proceedToMenu()">IK BEGRIJP HET — DOORGAAN<span class="blink"> ▶</span></button>
@@ -792,7 +882,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 
 <!-- ════ START ════ -->
 <div id="startScreen">
-  <canvas id="dripsCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0"></canvas>
+  <!-- Background Gijs glitch hero -->
+  <div id="gijsHero">
+    <img id="gijsHeroImg" src="Images/GijsCamera.png" alt="">
+    <img class="gijs-ghost red" src="Images/GijsCamera.png" alt="">
+    <img class="gijs-ghost cyan" src="Images/GijsCamera.png" alt="">
+    <div class="gijs-scanbar"></div>
+  </div>
+  <canvas id="dripsCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1"></canvas>
   <div class="start-inner">
     <div class="term-bar">
       <div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div>
@@ -800,12 +897,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
     </div>
     <div class="term-window">
       <div class="start-eyebrow">SYSTEEM GEÏNITIALISEERD — NACHT SELECTIE</div>
-      <!-- Gijs glitch image -->
-      <div class="menu-gijs-wrap">
-        <img class="menu-gijs-img" src="Images/GijsCamera.png" alt="Meester Gijs">
-        <div class="menu-gijs-scanlines"></div>
-        <div class="menu-gijs-glitch-bar"></div>
-      </div>
       <div class="start-title">FIVE NIGHTS AT<br>MEESTER GIJS</div>
       <div class="start-sub">Five Nights of Academic Detention<span class="blink">_</span></div>
       <div class="lore-card" id="loreCard">
@@ -844,9 +935,121 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
           <div class="nb-enemies">Alle vijanden · MAX AI</div>
           <div class="nb-diff diff-5">●●●●●</div>
         </button>
+        <button class="night-btn" id="nbCustom" onclick="selectCustomNight()">
+          <div class="nb-num">N<span>★</span></div>
+          <div class="nb-title">CUSTOM NACHT</div>
+          <div class="nb-enemies">Stel elk karakter in<br>van 0 tot 20</div>
+          <div class="nb-diff diff-5" style="font-size:.55rem;letter-spacing:1px">CUSTOM</div>
+        </button>
+      </div>
+      <!-- CUSTOM NIGHT PANEL -->
+      <div id="customNightPanel" style="display:none;margin-bottom:18px;border:1px solid #1a0000;border-left:3px solid #550000;background:rgba(8,0,0,.9);padding:16px 18px;position:relative;">
+        <div style="position:absolute;top:-9px;left:16px;background:#020000;padding:0 6px;font-size:.5rem;color:#330000;letter-spacing:5px;font-family:'Share Tech Mono',monospace;">CUSTOM CONFIG</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 16px;">
+          <!-- Gijs -->
+          <div class="cn-row">
+            <div class="cn-label">⚠ Meester Gijs</div>
+            <div class="cn-ctrl">
+              <button class="cn-btn" onclick="setCustomLevel('gijs',customLevels.gijs-1)">−</button>
+              <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_gijs"></div></div>
+              <input class="cn-input" id="ci_gijs" type="number" min="0" max="20" value="5" oninput="setCustomLevel('gijs',this.value)">
+              <button class="cn-btn" onclick="setCustomLevel('gijs',customLevels.gijs+1)">+</button>
+            </div>
+            <div class="cn-val-row"><span class="cn-num" id="cv_gijs">5</span><span class="cn-lbl" id="cdl_gijs">GEMIDDELD</span></div>
+          </div>
+          <!-- Hobo Gijs -->
+          <div class="cn-row">
+            <div class="cn-label">👤 Hobo Gijs</div>
+            <div class="cn-ctrl">
+              <button class="cn-btn" onclick="setCustomLevel('hobo',customLevels.hobo-1)">−</button>
+              <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_hobo"></div></div>
+              <input class="cn-input" id="ci_hobo" type="number" min="0" max="20" value="5" oninput="setCustomLevel('hobo',this.value)">
+              <button class="cn-btn" onclick="setCustomLevel('hobo',customLevels.hobo+1)">+</button>
+            </div>
+            <div class="cn-val-row"><span class="cn-num" id="cv_hobo">5</span><span class="cn-lbl" id="cdl_hobo">GEMIDDELD</span></div>
+          </div>
+          <!-- Tumor Tom -->
+          <div class="cn-row">
+            <div class="cn-label">🎵 Tumor Tom</div>
+            <div class="cn-ctrl">
+              <button class="cn-btn" onclick="setCustomLevel('tom',customLevels.tom-1)">−</button>
+              <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_tom"></div></div>
+              <input class="cn-input" id="ci_tom" type="number" min="0" max="20" value="3" oninput="setCustomLevel('tom',this.value)">
+              <button class="cn-btn" onclick="setCustomLevel('tom',customLevels.tom+1)">+</button>
+            </div>
+            <div class="cn-val-row"><span class="cn-num" id="cv_tom">3</span><span class="cn-lbl" id="cdl_tom">LAAG</span></div>
+          </div>
+          <!-- Mark Rutte -->
+          <div class="cn-row">
+            <div class="cn-label">🪟 Mark Rutte</div>
+            <div class="cn-ctrl">
+              <button class="cn-btn" onclick="setCustomLevel('mark',customLevels.mark-1)">−</button>
+              <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_mark"></div></div>
+              <input class="cn-input" id="ci_mark" type="number" min="0" max="20" value="3" oninput="setCustomLevel('mark',this.value)">
+              <button class="cn-btn" onclick="setCustomLevel('mark',customLevels.mark+1)">+</button>
+            </div>
+            <div class="cn-val-row"><span class="cn-num" id="cv_mark">3</span><span class="cn-lbl" id="cdl_mark">LAAG</span></div>
+          </div>
+          <!-- Maduro -->
+          <div class="cn-row">
+            <div class="cn-label">📡 Maduro</div>
+            <div class="cn-ctrl">
+              <button class="cn-btn" onclick="setCustomLevel('maduro',customLevels.maduro-1)">−</button>
+              <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_maduro"></div></div>
+              <input class="cn-input" id="ci_maduro" type="number" min="0" max="20" value="3" oninput="setCustomLevel('maduro',this.value)">
+              <button class="cn-btn" onclick="setCustomLevel('maduro',customLevels.maduro+1)">+</button>
+            </div>
+            <div class="cn-val-row"><span class="cn-num" id="cv_maduro">3</span><span class="cn-lbl" id="cdl_maduro">LAAG</span></div>
+          </div>
+          <!-- Jeffrey -->
+          <div class="cn-row">
+            <div class="cn-label">🚶 Jeffrey</div>
+            <div class="cn-ctrl">
+              <button class="cn-btn" onclick="setCustomLevel('jeffrey',customLevels.jeffrey-1)">−</button>
+              <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_jeffrey"></div></div>
+              <input class="cn-input" id="ci_jeffrey" type="number" min="0" max="20" value="0" oninput="setCustomLevel('jeffrey',this.value)">
+              <button class="cn-btn" onclick="setCustomLevel('jeffrey',customLevels.jeffrey+1)">+</button>
+            </div>
+            <div class="cn-val-row"><span class="cn-num" id="cv_jeffrey">0</span><span class="cn-lbl" id="cdl_jeffrey">INACTIEF</span></div>
+          </div>
+          <!-- Chapo -->
+          <div class="cn-row">
+            <div class="cn-label">🔫 Chapo</div>
+            <div class="cn-ctrl">
+              <button class="cn-btn" onclick="setCustomLevel('chapo',customLevels.chapo-1)">−</button>
+              <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_chapo"></div></div>
+              <input class="cn-input" id="ci_chapo" type="number" min="0" max="20" value="0" oninput="setCustomLevel('chapo',this.value)">
+              <button class="cn-btn" onclick="setCustomLevel('chapo',customLevels.chapo+1)">+</button>
+            </div>
+            <div class="cn-val-row"><span class="cn-num" id="cv_chapo">0</span><span class="cn-lbl" id="cdl_chapo">INACTIEF</span></div>
+          </div>
+          <!-- Diddy -->
+          <div class="cn-row">
+            <div class="cn-label">🎤 Diddy</div>
+            <div class="cn-ctrl">
+              <button class="cn-btn" onclick="setCustomLevel('diddy',customLevels.diddy-1)">−</button>
+              <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_diddy"></div></div>
+              <input class="cn-input" id="ci_diddy" type="number" min="0" max="20" value="0" oninput="setCustomLevel('diddy',this.value)">
+              <button class="cn-btn" onclick="setCustomLevel('diddy',customLevels.diddy+1)">+</button>
+            </div>
+            <div class="cn-val-row"><span class="cn-num" id="cv_diddy">0</span><span class="cn-lbl" id="cdl_diddy">INACTIEF</span></div>
+          </div>
+          <!-- Shadow Gijs -->
+          <div class="cn-row">
+            <div class="cn-label">👻 Shadow Gijs</div>
+            <div class="cn-ctrl">
+              <button class="cn-btn" onclick="setCustomLevel('shadow',customLevels.shadow-1)">−</button>
+              <div class="cn-bar-wrap"><div class="cn-bar-fill" id="cb_shadow"></div></div>
+              <input class="cn-input" id="ci_shadow" type="number" min="0" max="20" value="2" oninput="setCustomLevel('shadow',this.value)">
+              <button class="cn-btn" onclick="setCustomLevel('shadow',customLevels.shadow+1)">+</button>
+            </div>
+            <div class="cn-val-row"><span class="cn-num" id="cv_shadow">2</span><span class="cn-lbl" id="cdl_shadow">RUSTIG</span></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:.48rem;color:#332200;letter-spacing:3px;font-family:'Share Tech Mono',monospace;">// 0 = INACTIEF · 20 = MAX AGGRESIEF · Tom/Mark/Jeffrey/Chapo/Diddy op 0 = uitgeschakeld</div>
       </div>
       <button class="start-btn" id="startBtn" disabled>SELECTEER EEN NACHT</button>
-      <div class="start-hint">koptelefoon aanbevolen · gebruik camera's en deuren om te overleven</div>
+      <div class="start-hint">koptelefoon aanbevolen · gebruik camera's en deuren om te overleven · F11 voor volledig scherm</div>
     </div>
   </div>
 </div>
@@ -1022,17 +1225,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Sh
 
 <script>
 /* ================================================================
-   ONE NIGHT AT MEESTER GIJS  –  v6.1
-   Changes from v6.0:
-   - Warning screen: removed klasgenoten mention, added fullscreen tip
-   - Main menu: larger layout, Gijs glitch image added
-   - 5 AM: stop Ambience.mp3, play 5AM.mp3
-   - ShadowGijs jumpscare now uses Jumpscare.mp3 (not shadowGijsAudio)
+   ONE NIGHT AT MEESTER GIJS  –  v6.2
+   Custom Night: per-character difficulty 0-20
    ================================================================ */
 
 const FILES = {
   ambience:     'Audio/Ambience.mp3',
-  fiveAM:       'Audio/5AM.mp3',
   doorClose:    'Audio/DoorClose.mp3',
   jumpscare:    'Audio/Jumpscare.mp3',
   lure:         'Audio/Lure.mp3',
@@ -1050,6 +1248,7 @@ const FILES = {
   shock:        'Audio/Shock.mp3',
   cameraAlarm:  'Audio/CameraAlarm.mp3',
   menuMusic:    'Audio/Menu.mp3',
+  fiveAM:       'Audio/5AM.mp3',
   gijsCam:      'Images/GijsCamera.png',
   gijsJS:       'Images/GijsJumpscare.png',
   patrickJS:    'Images/PatrickJumpscare.png',
@@ -1089,45 +1288,75 @@ const LURE_CD_S          = 30;
 const GRACE_MS           = 4200;
 const DOOR_RETREAT_MIN   = 14000;
 const DOOR_RETREAT_MAX   = 25000;
-const MOVE_IVAL_EASY     = [32000,24000,16000,11000,7500,5000];
-const MOVE_IVAL_HARD     = [18000,13000,9000,6500,4500,3000];
-const HOBO_MIN_MS_EASY   = 5000;
-const HOBO_MAX_MS_EASY   = 20000;
-const HOBO_MIN_MS_HARD   = 3000;
-const HOBO_MAX_MS_HARD   = 10000;
+
+// Move intervals indexed by hour 0-5, base for difficulty 10
+// difficulty 0 = inactive, 20 = max aggression
+const MOVE_IVAL_BASE     = [32000,24000,16000,11000,7500,5000]; // difficulty 10
+const HOBO_MIN_BASE      = 5000;
+const HOBO_MAX_BASE      = 20000;
 const MB_DRAIN_BASE      = 0.8;
 const MB_DRAIN_SCALE     = 0.3;
 const MB_WIND_RATE       = 5.5;
 const MUSIC_CAM_ID       = 5;
-
-// ── CHAPO: 6 second kill window, immune to doors ──
-const CHAPO_KILL_DELAY_MS = 6000;
-
-// ── ALARM cooldown ──
+const CHAPO_KILL_DELAY_MS= 6000;
 const ALARM_CD_S         = 20;
-
-// Maduro
 const MADURO_APPEAR_INTERVAL = 2000;
-const MADURO_APPEAR_CHANCE   = 0.04;
 const MADURO_WATCH_LIMIT_MS  = 500;
 const MADURO_DISABLE_MS      = 8000;
-
-// Jeffrey
 const JEFFREY_START_POS  = 0;
 const JEFFREY_PATH       = [0,1,2,3,4];
 const JEFFREY_SWITCH_S   = 50;
-
-// Chapo
 const CHAPO_CAM_ID       = 3;
 const CHAPO_ATTACK_S     = 60;
-const CHAPO_SPRITES      = 3;
+const DIDDY_MOVE_IVAL_BASE=[26000,20000,14000,10000,7000,4500];
 
-// Diddy — moves like Gijs, different path
-const DIDDY_MOVE_IVAL    = [26000,20000,14000,10000,7000,4500];
-const DIDDY_ALLOWED_CAMS = [0,1,2,3,4];
-
-/* ── 5 AM threshold (5/6 of the night) ── */
-const FIVE_AM_PROGRESS = 5/6;
+/* ── difficulty helpers ──
+   level 0  = inactive
+   level 1  = very slow (base * 3.0)
+   level 10 = normal (base * 1.0)
+   level 20 = max (base * 0.25)
+*/
+function diffToMoveIval(basePer10, level){
+  if(level===0) return Infinity;
+  const mult = 3.0 - (level-1)*(2.75/19);
+  return Math.max(800, Math.round(basePer10 * mult));
+}
+function diffToMoveIvals(basePer10arr, level){
+  if(level===0) return basePer10arr.map(()=>Infinity);
+  return basePer10arr.map(b=>diffToMoveIval(b,level));
+}
+function diffToJeffreySwitch(level){
+  if(level===0) return Infinity;
+  // base 50s at level 10, 8s at level 20, 120s at level 1
+  return Math.max(8, Math.round(50 * (3.0 - (level-1)*(2.75/19))));
+}
+function diffToChapoAttack(level){
+  if(level===0) return Infinity;
+  return Math.max(8, Math.round(60 * (3.0 - (level-1)*(2.75/19))));
+}
+function diffToHoboMs(level){
+  if(level===0) return {min:Infinity,max:Infinity};
+  const mult = 3.0 - (level-1)*(2.75/19);
+  return {
+    min: Math.max(1000, Math.round(HOBO_MIN_BASE * mult)),
+    max: Math.max(3000, Math.round(HOBO_MAX_BASE * mult))
+  };
+}
+function diffToMaduroChance(level){
+  if(level===0) return 0;
+  return 0.005 + (level/20)*0.10;
+}
+function diffToShadowChance(level){
+  if(level===0) return 0;
+  return 0.001 + (level/20)*0.015;
+}
+function diffToMarkInterval(level){
+  // how often mark tries to appear (ms)
+  if(level===0) return Infinity;
+  const base = 10000;
+  const mult = 3.0 - (level-1)*(2.75/19);
+  return Math.max(1500, Math.round(base*mult));
+}
 
 /* ── CAMERAS ── */
 const CAMS = [
@@ -1160,6 +1389,57 @@ function stopMenuMusic(){
   menuAudio.pause();
   menuAudio.currentTime=0;
 }
+
+/* ── CUSTOM NIGHT DEFAULTS ── */
+const CUSTOM_DEFAULTS = {
+  gijs:5, hobo:5, tom:3, mark:3, maduro:3, jeffrey:0, chapo:0, diddy:0, shadow:2
+};
+let customLevels = {...CUSTOM_DEFAULTS};
+
+function buildCustomNightConfig(){
+  const lvls = customLevels;
+  const gijsLvl   = lvls.gijs;
+  const hoboLvl   = lvls.hobo;
+  const tomLvl    = lvls.tom;
+  const markLvl   = lvls.mark;
+  const maduroLvl = lvls.maduro;
+  const jeffLvl   = lvls.jeffrey;
+  const chapoLvl  = lvls.chapo;
+  const diddyLvl  = lvls.diddy;
+  const shadowLvl = lvls.shadow;
+
+  // Compute total difficulty for label
+  const total = Object.values(lvls).reduce((a,b)=>a+b,0);
+  const maxTotal = Object.keys(lvls).length * 20;
+  const pct = Math.round((total/maxTotal)*100);
+
+  return {
+    label:`Custom Nacht · ${pct}% Gevaar`,
+    lore:`Je hebt de AI zelf ingesteld. Elke vijand op een eigen niveau. <strong>Veel succes.</strong>`,
+    quote:`"You asked for this."`,
+    warn:`⚠ Custom moeilijkheidsgraad. Niveaus: Gijs ${gijsLvl} · Hobo ${hoboLvl} · Tom ${tomLvl} · Mark ${markLvl} · Maduro ${maduroLvl} · Jeffrey ${jeffLvl} · Chapo ${chapoLvl} · Diddy ${diddyLvl} · Shadow ${shadowLvl}`,
+    gijsActive:  gijsLvl > 0,
+    hoboActive:  hoboLvl > 0,
+    tomActive:   tomLvl > 0,
+    markRutteActive: markLvl > 0,
+    jeffreyActive:   jeffLvl > 0,
+    chapoActive:     chapoLvl > 0,
+    diddyActive:     diddyLvl > 0,
+    maduroChance:    diffToMaduroChance(maduroLvl),
+    shadowChance:    diffToShadowChance(shadowLvl),
+    moveIval:    diffToMoveIvals(MOVE_IVAL_BASE, gijsLvl),
+    hoboMinMs:   diffToHoboMs(hoboLvl).min,
+    hoboMaxMs:   diffToHoboMs(hoboLvl).max,
+    // custom extensions
+    jeffreySwitch: diffToJeffreySwitch(jeffLvl),
+    chapoAttack:   diffToChapoAttack(chapoLvl),
+    diddyMoveIval: diffToMoveIvals(DIDDY_MOVE_IVAL_BASE, diddyLvl),
+    markInterval:  diffToMarkInterval(markLvl),
+    isCustom: true,
+    customLevels: {...lvls},
+  };
+}
+
 const NIGHT_CONFIGS = {
   1: {
     label:'Nacht 1 · De Kelder',
@@ -1187,7 +1467,7 @@ const NIGHT_CONFIGS = {
     label:'Nacht 3 · De Gang',
     lore:'Jeffrey slaapt niet. Hij loopt. En hij stopt nooit. Chapo wacht in de linker gang op zijn kans.',
     quote:'"The doors will not save you from everything."',
-    warn:'⚠ Jeffrey negeert deuren — gebruik lure. ⚠ Chapo: Activeer het alarm voordat het te laat is... ⚠ ALARM knop beschikbaar.',
+    warn:'⚠ Jeffrey negeert deuren — gebruik lure. ⚠ Chapo: sluit beide deuren bij alarm. ⚠ ALARM knop beschikbaar.',
     gijsActive:true, hoboActive:true, tomActive:true, markRutteActive:true,
     jeffreyActive:true, chapoActive:true, diddyActive:false,
     maduroChance:0.04, shadowChance:0.005,
@@ -1196,7 +1476,7 @@ const NIGHT_CONFIGS = {
   },
   4: {
     label:'Nacht 4 · De Kelder Diept',
-    lore:'Diddy is er nu ook. Hij negeert deuren volledig. Gebruik het alarm en de audio lure slim.',
+    lore:'Diddy is er nu ook. Hij negeert deuren volledig. Gebruik het alarm en de lure slim.',
     quote:'"There is no hiding anymore."',
     warn:'⚠ Diddy negeert deuren — ALARM of lure. ⚠ Chapo is immuun voor deuren. ⚠ Alarm CD: 20s.',
     gijsActive:true, hoboActive:true, tomActive:true, markRutteActive:true,
@@ -1218,33 +1498,89 @@ const NIGHT_CONFIGS = {
   },
 };
 
-let selectedNight = 0;
+let selectedNight = 0; // 0=none, 1-5=preset, 6=custom
 
 function selectNight(n){
   selectedNight = n;
+  document.getElementById('customNightPanel').style.display='none';
   const cfg = NIGHT_CONFIGS[n];
   document.getElementById('loreText').innerHTML = cfg.lore;
   document.getElementById('loreQuote').textContent = cfg.quote;
   document.getElementById('loreWarn').innerHTML = cfg.warn;
   document.getElementById('loreCard').style.borderTopColor = n===5?'#ff6600':'#550000';
+  document.getElementById('loreCard').style.display='block';
   for(let i=1;i<=5;i++){
     const btn=document.getElementById('nb'+i);
     btn.className='night-btn'+(i===n?(n===5?' night5-sel':' selected'):'');
   }
+  document.getElementById('nbCustom').className='night-btn';
   const sb=document.getElementById('startBtn');
   sb.disabled=false;
   sb.className='start-btn'+(n===5?' night5-btn':'');
   sb.textContent=`▶  NACHT ${n} STARTEN`;
 }
 
+function selectCustomNight(){
+  selectedNight = 6;
+  document.getElementById('customNightPanel').style.display='block';
+  document.getElementById('loreCard').style.display='none';
+  for(let i=1;i<=5;i++) document.getElementById('nb'+i).className='night-btn';
+  document.getElementById('nbCustom').className='night-btn night-custom-sel';
+  updateCustomStartBtn();
+}
+
+function updateCustomStartBtn(){
+  const sb=document.getElementById('startBtn');
+  sb.disabled=false;
+  sb.className='start-btn night-custom-btn';
+  sb.textContent='▶  CUSTOM NACHT STARTEN';
+}
+
+function setCustomLevel(char, val){
+  val = Math.max(0, Math.min(20, parseInt(val)||0));
+  customLevels[char] = val;
+  const input = document.getElementById('ci_'+char);
+  const display = document.getElementById('cv_'+char);
+  const bar = document.getElementById('cb_'+char);
+  if(input) input.value = val;
+  if(display) display.textContent = val;
+  if(bar){
+    bar.style.width = (val/20*100)+'%';
+    // color based on level
+    if(val===0) bar.style.background='#1a1a1a';
+    else if(val<=5) bar.style.background='linear-gradient(90deg,#1a3a0a,#3a8a0a)';
+    else if(val<=10) bar.style.background='linear-gradient(90deg,#5a5a00,#aaaa00)';
+    else if(val<=15) bar.style.background='linear-gradient(90deg,#883300,#ff6600)';
+    else bar.style.background='linear-gradient(90deg,#880000,#ff0000)';
+  }
+  // Update label
+  const lbl = document.getElementById('cdl_'+char);
+  if(lbl){
+    const labels=['INACTIEF','SLUIMERT','RUSTIG','TRAAG','LAAG','GEMIDDELD','ACTIEF','ACTIEF','HOOG','HOOG','GEVAARLIJK','GEVAARLIJK','AGRESSIEF','AGRESSIEF','ZEER AGRESSIEF','ZEER AGRESSIEF','KRITIEK','KRITIEK','LETHAL','LETHAL','MAX'];
+    lbl.textContent = labels[val]||'MAX';
+    lbl.style.color = val===0?'#333':val<=5?'#3a8a0a':val<=10?'#aaaa00':val<=15?'#ff6600':'#ff0000';
+  }
+}
+
 /* ── STATE ── */
 let G={};
 const SFX={};
 let glitchActive=false,glitchTimer=null;
+let fiveAMPlayed=false;
 
 function mkState(){
-  const n = selectedNight || 1;
-  const cfg = NIGHT_CONFIGS[n];
+  const n = selectedNight;
+  let cfg;
+  if(n===6){
+    cfg = buildCustomNightConfig();
+  } else {
+    cfg = {...NIGHT_CONFIGS[n||1]};
+  }
+  // Defaults for custom fields not in preset configs
+  if(!cfg.jeffreySwitch) cfg.jeffreySwitch = JEFFREY_SWITCH_S;
+  if(!cfg.chapoAttack)   cfg.chapoAttack   = CHAPO_ATTACK_S;
+  if(!cfg.diddyMoveIval) cfg.diddyMoveIval = DIDDY_MOVE_IVAL_BASE;
+  if(!cfg.markInterval)  cfg.markInterval  = 10000;
   return{
     running:false,nightStart:0,hour:0,night:n,cfg:cfg,
     o2:100,o2Dead:false,
@@ -1253,54 +1589,21 @@ function mkState(){
     mPos:POS.C0,mPath:null,mDoorTimer:null,mMoveTimer:null,mRetreatTimer:null,
     hoboPos:0,hoboMoveTimer:null,
     musicBox:100,isWindingUp:false,
-    // Maduro
-    maduroPos:-1,
-    maduroWatchMs:0,
-    maduroDisabledCams:{},
-    maduroSpawnTimer:null,
-    maduroReconnectTimers:{},
-    // Jeffrey
-    jeffreyStep:0,
-    jeffreyPos:JEFFREY_START_POS,
-    jeffreyTimer:JEFFREY_SWITCH_S,
+    maduroPos:-1,maduroWatchMs:0,maduroDisabledCams:{},maduroSpawnTimer:null,maduroReconnectTimers:{},
+    jeffreyStep:0,jeffreyPos:JEFFREY_START_POS,jeffreyTimer:cfg.jeffreySwitch,
     jeffreyActive:cfg.jeffreyActive,
-    // Chapo — immune to doors
-    chapoTimer:CHAPO_ATTACK_S,
-    chapoSprite:0,
-    chapoAlarm:false,
-    chapoActive:cfg.chapoActive,
-    chapoKillTimer:null,
-    // Diddy
-    diddyPos:POS.C0,
-    diddyMoveTimer:null,
-    diddyActive:cfg.diddyActive,
-    diddyPath:null,
-    // Camera Alarm
-    alarmReady:false,
-    alarmCD:ALARM_CD_S,
-    alarmCDTimer:null,
-    // Camera state
+    chapoTimer:cfg.chapoAttack,chapoSprite:0,chapoAlarm:false,
+    chapoActive:cfg.chapoActive,chapoKillTimer:null,
+    diddyPos:POS.C0,diddyMoveTimer:null,diddyActive:cfg.diddyActive,diddyPath:null,
+    alarmReady:false,alarmCD:ALARM_CD_S,alarmCDTimer:null,
     camOpen:false,curCam:0,
-    // Lure
     lureReady:false,lureCD:LURE_CD_S,lureCDTimer:null,
     dead:false,won:false,
-    // Mark
-    markInVent:false,
-    markAppearTimer:null,
-    markKillTimer:null,
-    markLeaveTimer:null,
-    markCheckInterval:null,
-    // Fire/misc
+    markInVent:false,markAppearTimer:null,markKillTimer:null,markLeaveTimer:null,markCheckInterval:null,
     firePtcls:[],fireOn:false,fireAnim:null,
-    tickTimer:null,timeTimer:null,fireTimer:null,
-    glitchLoopTimer:null,
-    attackFlashTimer:null,
-    // ShadowGijs
-    shadowActive:false,
-    shadowKillTimer:null,
-    shadowCheckTimer:null,
-    // 5 AM flag
-    fiveAMTriggered:false,
+    tickTimer:null,timeTimer:null,fireTimer:null,glitchLoopTimer:null,attackFlashTimer:null,
+    shadowActive:false,shadowKillTimer:null,shadowCheckTimer:null,
+    fiveAMDone:false,
   };
 }
 
@@ -1308,7 +1611,6 @@ function mkState(){
 function initAudio(){
   Object.entries({
     ambience:     [FILES.ambience,     true,  .28],
-    fiveAM:       [FILES.fiveAM,       false, .55],
     doorClose:    [FILES.doorClose,    false, .8 ],
     jumpscare:    [FILES.jumpscare,    false, 1  ],
     lure:         [FILES.lure,         false, .75],
@@ -1326,6 +1628,7 @@ function initAudio(){
     shock:        [FILES.shock,        false, .95],
     cameraAlarm:  [FILES.cameraAlarm,  false, .9 ],
     shadowGijsAudio: [FILES.shadowGijsAudio, false, .9],
+    fiveAM:       [FILES.fiveAM,       false, 1.0],
   }).forEach(([k,[src,loop,vol]])=>{
     SFX[k]=new Audio(src);SFX[k].loop=loop;SFX[k].volume=vol;
   });
@@ -1348,7 +1651,6 @@ function showAttackFlash(imgSrc, onDone){
     onDone();
   }, 2000);
 }
-
 function hideAttackFlash(){
   const overlay = document.getElementById('attackFlashOverlay');
   overlay.classList.remove('active');
@@ -1363,21 +1665,17 @@ function drawOffice(){
   const H=cv.height=window.innerHeight;
   const ctx=cv.getContext('2d');
   ctx.clearRect(0,0,W,H);
-
   const ceilH=H*.065;
   const ceilGrad=ctx.createLinearGradient(0,0,0,ceilH*2);
   ceilGrad.addColorStop(0,'#0a0a0d');ceilGrad.addColorStop(1,'#141418');
   ctx.fillStyle=ceilGrad;ctx.fillRect(0,0,W,ceilH);
-
   const wallTop=ceilH,wallBot=H*.62;
   const wallGrad=ctx.createLinearGradient(0,wallTop,0,wallBot);
   wallGrad.addColorStop(0,'#12121a');wallGrad.addColorStop(1,'#0d0d15');
   ctx.fillStyle=wallGrad;ctx.fillRect(0,wallTop,W,wallBot-wallTop);
-
   ctx.strokeStyle='rgba(255,255,255,0.012)';ctx.lineWidth=.8;
   for(let x=0;x<W;x+=Math.floor(W/18)){ctx.beginPath();ctx.moveTo(x,wallTop);ctx.lineTo(x,wallBot);ctx.stroke()}
   for(let y=wallTop;y<wallBot;y+=Math.floor((wallBot-wallTop)/10)){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
-
   function crack(x1,y1,segs,len,spread){
     ctx.strokeStyle='rgba(0,0,0,0.5)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x1,y1);
     let cx=x1,cy=y1;
@@ -1386,7 +1684,6 @@ function drawOffice(){
   }
   crack(W*.18,wallTop+20,8,90,12);crack(W*.22,wallTop+55,5,50,8);
   crack(W*.7,wallTop+15,7,80,14);crack(W*.74,wallTop+40,4,45,9);
-
   function drawPipe(x,w){
     const pg=ctx.createLinearGradient(0,0,0,ceilH);
     pg.addColorStop(0,'#252530');pg.addColorStop(.5,'#1c1c26');pg.addColorStop(1,'#111118');
@@ -1397,7 +1694,6 @@ function drawOffice(){
     ctx.fillStyle=sh;ctx.fillRect(x,ceilH,w,20);
   }
   drawPipe(W*.04,W*.28);drawPipe(W*.6,W*.18);drawPipe(W*.84,W*.12);
-
   const lx=W/2,wireTop=ceilH,wireH=H*.1;
   ctx.strokeStyle='#1e1e1e';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(lx,wireTop);ctx.lineTo(lx,wireTop+wireH);ctx.stroke();
   ctx.save();
@@ -1407,7 +1703,6 @@ function drawOffice(){
   ctx.beginPath();ctx.moveTo(lx-H*.04,wireTop+wireH);ctx.lineTo(lx+H*.04,wireTop+wireH);
   ctx.lineTo(lx+H*.065,wireTop+wireH+H*.07);ctx.lineTo(lx-H*.065,wireTop+wireH+H*.07);
   ctx.closePath();ctx.fill();ctx.strokeStyle='#252528';ctx.lineWidth=1;ctx.stroke();ctx.restore();
-
   const wbW=W*.18,wbH=H*.14,wbX=W*.15,wbY=wallTop+H*.04;
   ctx.fillStyle='#5c4a30';ctx.fillRect(wbX-5,wbY-5,wbW+10,wbH+10);
   ctx.fillStyle='#ece8e0';ctx.fillRect(wbX,wbY,wbW,wbH);
@@ -1422,7 +1717,6 @@ function drawOffice(){
   ctx.fillText('★ 1/10 ★',wbX+wbW/2,wbY+wbH*.84);
   ctx.fillStyle='#cc2222';ctx.beginPath();ctx.arc(wbX+wbW/2,wbY-2,5,0,Math.PI*2);ctx.fill();
   ctx.textAlign='left';
-
   const posters=[
     {x:W*.04,y:wallTop+H*.05,w:W*.09,h:H*.13,rot:-.02,title:'Irregular Verbs',lines:['go → went','see → saw','eat → ate']},
     {x:W*.72,y:wallTop+H*.04,w:W*.1,h:H*.14,rot:.02,title:'Rules',lines:['1. English only','2. No Dutch','3. No failing']},
@@ -1442,19 +1736,12 @@ function drawOffice(){
     ctx.fillStyle='#cc1111';ctx.beginPath();ctx.arc(0,-p.h/2+4,4,0,Math.PI*2);ctx.fill();
     ctx.restore();
   });
-
   const ventW=Math.min(180,window.innerWidth*.18)+20;
   const ventH=Math.min(130,window.innerWidth*.13)+20;
   const ventX=W/2-ventW/2;
   const ventY=H*.07-5;
-  ctx.fillStyle='#0a0806';
-  ctx.fillRect(ventX-8,ventY-8,ventW+16,ventH+16);
-  ctx.strokeStyle='#3a2a10';ctx.lineWidth=2;
-  ctx.strokeRect(ventX-8,ventY-8,ventW+16,ventH+16);
-  const vsGrad=ctx.createLinearGradient(ventX-8,ventY-8,ventX-8,ventY+ventH+8);
-  vsGrad.addColorStop(0,'rgba(0,0,0,.6)');vsGrad.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=vsGrad;ctx.fillRect(ventX-8,ventY-8,ventW+16,ventH+16);
-
+  ctx.fillStyle='#0a0806';ctx.fillRect(ventX-8,ventY-8,ventW+16,ventH+16);
+  ctx.strokeStyle='#3a2a10';ctx.lineWidth=2;ctx.strokeRect(ventX-8,ventY-8,ventW+16,ventH+16);
   const floorY=H*.62;
   const floorGrad=ctx.createLinearGradient(0,floorY,0,H);
   floorGrad.addColorStop(0,'#101018');floorGrad.addColorStop(1,'#0c0c14');
@@ -1464,17 +1751,11 @@ function drawOffice(){
   for(let x=0;x<W;x+=tileW){ctx.beginPath();ctx.moveTo(x,floorY);ctx.lineTo(x,H);ctx.stroke()}
   const tileH=Math.floor((H-floorY)/5);
   for(let y=floorY;y<H;y+=tileH){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
-  ctx.strokeStyle='rgba(255,255,255,0.015)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(0,floorY);ctx.lineTo(W,floorY);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(0,H);ctx.lineTo(W/2,floorY);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(W,H);ctx.lineTo(W/2,floorY);ctx.stroke();
-
   const deskW=W*.32,deskH=H*.08,deskX=W/2-W*.32/2,deskY=H-H*.08;
   const dGrad=ctx.createLinearGradient(deskX,deskY,deskX,H);
   dGrad.addColorStop(0,'#2a1a08');dGrad.addColorStop(1,'#1a0f05');
   ctx.fillStyle=dGrad;ctx.fillRect(deskX,deskY,deskW,deskH);
   ctx.strokeStyle='#3e2810';ctx.lineWidth=2;ctx.strokeRect(deskX,deskY,deskW,deskH);
-
   const mW=W*.1,mH=H*.09,mX=W/2-W*.1/2,mY=deskY-H*.09;
   ctx.fillStyle='#0c0c14';ctx.strokeStyle='#2a2a38';ctx.lineWidth=2;
   ctx.fillRect(mX,mY,mW,mH);ctx.strokeRect(mX,mY,mW,mH);
@@ -1560,9 +1841,7 @@ function buildCamStrip(){
   });
 }
 
-function isCamDisabled(camId){
-  return !!(G.maduroDisabledCams&&G.maduroDisabledCams[camId]>0);
-}
+function isCamDisabled(camId){return !!(G.maduroDisabledCams&&G.maduroDisabledCams[camId]>0);}
 
 function switchCam(id){
   if(isCamDisabled(id)){
@@ -1571,12 +1850,8 @@ function switchCam(id){
     return;
   }
   if(id!==G.curCam) play('cameraSwitch');
-  if(G.maduroPos===G.curCam && id!==G.curCam){
-    maduroDespawn();
-  }
-  if(G.curCam===MUSIC_CAM_ID&&id!==MUSIC_CAM_ID){
-    if(SFX.muziek) SFX.muziek.volume=0.15;
-  }
+  if(G.maduroPos===G.curCam && id!==G.curCam) maduroDespawn();
+  if(G.curCam===MUSIC_CAM_ID&&id!==MUSIC_CAM_ID){if(SFX.muziek) SFX.muziek.volume=0.15;}
   G.curCam=id;
   G.maduroWatchMs=0;
   document.querySelectorAll('.cam-thumb').forEach(t=>t.classList.remove('ct-on'));
@@ -1594,16 +1869,13 @@ function switchCam(id){
 function renderCamFeed(){
   const id=G.curCam;
   const disabled=isCamDisabled(id);
-
   const disOv=document.getElementById('maduroDisabledOverlay');
   disOv.classList.toggle('active',disabled);
-
   if(disabled){
     ['monsterCamImg','hoboCamImg','jeffreyCamImg','chapoCamImg','tomCamImg','maduroCamImg','diddyCamImg'].forEach(i=>
       document.getElementById(i).style.display='none');
     return;
   }
-
   const gijsHere   = G.mPos===id&&id!==MUSIC_CAM_ID;
   const hoboHere   = G.hoboPos===id&&id!==MUSIC_CAM_ID;
   const jeffreyHere= G.jeffreyActive&&G.jeffreyPos===id&&id!==MUSIC_CAM_ID;
@@ -1611,39 +1883,29 @@ function renderCamFeed(){
   const tomHere    = G.cfg.tomActive&&id===MUSIC_CAM_ID;
   const maduroHere = G.maduroPos===id;
   const diddyHere  = G.diddyActive&&G.diddyPos===id&&id!==MUSIC_CAM_ID;
-
   const cv=document.getElementById('camCanvas');
   cv.width=cv.offsetWidth||800;cv.height=cv.offsetHeight||400;
   drawCamRoom(cv,id,false);
-
   document.getElementById('monsterCamImg').style.display=gijsHere?'block':'none';
   if(gijsHere) document.getElementById('monsterCamImg').src=FILES.gijsCam;
-
   document.getElementById('hoboCamImg').style.display=hoboHere?'block':'none';
   if(hoboHere) document.getElementById('hoboCamImg').src=FILES.hoboGijsCam;
-
   document.getElementById('jeffreyCamImg').style.display=jeffreyHere?'block':'none';
   if(jeffreyHere) document.getElementById('jeffreyCamImg').src=FILES.jeffreyCam;
-
   const chapoImg=document.getElementById('chapoCamImg');
   chapoImg.style.display=chapoHere?'block':'none';
   if(chapoHere){chapoImg.src=FILES.chapoCam;applyChapoStyle(chapoImg,G.chapoSprite,G.chapoTimer);}
-
   const tomImg=document.getElementById('tomCamImg');
   tomImg.style.display=tomHere?'block':'none';
   if(tomHere){tomImg.src=FILES.tomCam;applyTomStyle(tomImg,G.musicBox);}
-
   const diddyImg=document.getElementById('diddyCamImg');
   diddyImg.style.display=diddyHere?'block':'none';
   if(diddyHere) diddyImg.src=FILES.diddyCam;
-
   const maduroImg=document.getElementById('maduroCamImg');
   maduroImg.style.display=maduroHere?'block':'none';
-
   const overlay=document.getElementById('tomDangerOverlay');
   if(tomHere){const danger=Math.max(0,(100-G.musicBox)/100);overlay.style.opacity=String(Math.pow(danger,1.4)*0.9);}
   else overlay.style.opacity='0';
-
   document.getElementById('camMain').classList.toggle('cam-active-static',gijsHere||hoboHere||jeffreyHere||diddyHere);
   document.getElementById('camTs').textContent=new Date().toLocaleTimeString('nl-NL');
 }
@@ -1699,10 +1961,8 @@ function refreshMonsterDots(){
       else thumb.classList.remove('cam-maduro-warn');
     }
   });
-
   document.getElementById('dotMon').classList.toggle('on',G.mPos>=POS.LD);
   document.getElementById('dotHobo').classList.toggle('on',true);
-
   const dotTom=document.getElementById('dotTom');
   if(dotTom){
     dotTom.className='hud-status-dot';
@@ -1710,7 +1970,6 @@ function refreshMonsterDots(){
     else if(G.musicBox>20) dotTom.classList.add('warn');
     else dotTom.classList.add('crit');
   }
-
   const dotM=document.getElementById('dotMaduro');
   if(dotM){
     dotM.className='hud-status-dot';
@@ -1719,7 +1978,6 @@ function refreshMonsterDots(){
     else if(G.maduroPos>=0) dotM.classList.add('warn');
     else dotM.classList.add('on');
   }
-
   const dotJ=document.getElementById('dotJeffrey');
   if(dotJ&&G.jeffreyActive) dotJ.className='hud-status-dot warn';
   const dotC=document.getElementById('dotChapo');
@@ -1756,7 +2014,6 @@ function updateAlarmUI(){
   } else {
     btn.disabled=true;
     btn.className='alarm-cam-btn';
-    btn.textContent='🚨 ALARM';
     const s=Math.ceil(G.alarmCD);
     lbl.textContent=s>0?`CD: ${s}s`:'--';
     lbl.className='alarm-cd-lbl';
@@ -1766,53 +2023,31 @@ function updateAlarmUI(){
 function useCameraAlarm(){
   if(!G.alarmReady||G.dead||G.won) return;
   play('cameraAlarm');
-  let used=false;
-
-  if(G.chapoActive&&G.curCam===CHAPO_CAM_ID&&!G.chapoAlarm){
-    resetChapo();
-    used=true;
-  }
-  if(G.chapoActive&&G.chapoAlarm){
-    resetChapo();
-    used=true;
-  }
-  if(G.diddyActive&&G.diddyPos===G.curCam&&G.curCam!==MUSIC_CAM_ID){
-    resetDiddy();
-    used=true;
-  }
-
-  G.alarmReady=false;
-  G.alarmCD=ALARM_CD_S;
+  if(G.chapoActive&&G.curCam===CHAPO_CAM_ID&&!G.chapoAlarm) resetChapo();
+  if(G.chapoActive&&G.chapoAlarm) resetChapo();
+  if(G.diddyActive&&G.diddyPos===G.curCam&&G.curCam!==MUSIC_CAM_ID) resetDiddy();
+  G.alarmReady=false;G.alarmCD=ALARM_CD_S;
   clearInterval(G.alarmCDTimer);
   G.alarmCDTimer=setInterval(()=>{
     G.alarmCD--;
     if(G.alarmCD<=0){G.alarmReady=true;G.alarmCD=0;clearInterval(G.alarmCDTimer);}
     updateAlarmUI();
   },1000);
-  updateAlarmUI();
-  refreshMonsterDots();
+  updateAlarmUI();refreshMonsterDots();
 }
 
 function resetChapo(){
   if(G.chapoKillTimer){clearTimeout(G.chapoKillTimer);G.chapoKillTimer=null;}
   hideAttackFlash();
-  if(G.chapoAlarm){
-    stop('alarm');
-    document.getElementById('alarmOverlay').style.display='none';
-    G.chapoAlarm=false;
-  }
-  G.chapoTimer=CHAPO_ATTACK_S;
-  G.chapoSprite=0;
-  refreshMonsterDots();
-  if(G.camOpen) renderCamFeed();
+  if(G.chapoAlarm){stop('alarm');document.getElementById('alarmOverlay').style.display='none';G.chapoAlarm=false;}
+  G.chapoTimer=G.cfg.chapoAttack||CHAPO_ATTACK_S;G.chapoSprite=0;
+  refreshMonsterDots();if(G.camOpen) renderCamFeed();
 }
 
 function resetDiddy(){
   if(G.diddyMoveTimer){clearTimeout(G.diddyMoveTimer);}
-  G.diddyPos=POS.C0;
-  G.diddyPath=null;
-  refreshMonsterDots();
-  if(G.camOpen) renderCamFeed();
+  G.diddyPos=POS.C0;G.diddyPath=null;
+  refreshMonsterDots();if(G.camOpen) renderCamFeed();
   scheduleDiddyMove();
 }
 
@@ -1832,30 +2067,25 @@ function scheduleMaduroSpawn(){
 }
 
 function maduroSpawn(camId){
-  G.maduroPos=camId;
-  G.maduroWatchMs=0;
+  G.maduroPos=camId;G.maduroWatchMs=0;
   refreshMonsterDots();
   if(G.camOpen&&G.curCam===camId) renderCamFeed();
 }
 
 function maduroDespawn(){
   if(G.maduroPos<0) return;
-  G.maduroPos=-1;
-  G.maduroWatchMs=0;
-  refreshMonsterDots();
-  if(G.camOpen) renderCamFeed();
+  G.maduroPos=-1;G.maduroWatchMs=0;
+  refreshMonsterDots();if(G.camOpen) renderCamFeed();
 }
 
 function tickMaduro(){
   if(G.dead||G.won) return;
-
   let anyChange=false;
   Object.keys(G.maduroDisabledCams).forEach(camId=>{
     if(G.maduroDisabledCams[camId]>0){
       G.maduroDisabledCams[camId]-=TICK_MS;
       if(G.maduroDisabledCams[camId]<=0){
-        G.maduroDisabledCams[camId]=0;
-        anyChange=true;
+        G.maduroDisabledCams[camId]=0;anyChange=true;
         updateMaduroReconnectDisplay(parseInt(camId),0);
       } else {
         updateMaduroReconnectDisplay(parseInt(camId), Math.ceil(G.maduroDisabledCams[camId]/1000));
@@ -1863,12 +2093,9 @@ function tickMaduro(){
     }
   });
   if(anyChange) refreshMonsterDots();
-
   if(G.maduroPos>=0&&G.camOpen&&G.curCam===G.maduroPos&&!isCamDisabled(G.curCam)){
     G.maduroWatchMs+=TICK_MS;
-    if(G.maduroWatchMs>=MADURO_WATCH_LIMIT_MS){
-      triggerMaduroCamDisable(G.maduroPos);
-    }
+    if(G.maduroWatchMs>=MADURO_WATCH_LIMIT_MS) triggerMaduroCamDisable(G.maduroPos);
   } else if(G.maduroPos>=0&&(!G.camOpen||G.curCam!==G.maduroPos)){
     G.maduroWatchMs=0;
   }
@@ -1876,14 +2103,11 @@ function tickMaduro(){
 
 function triggerMaduroCamDisable(camId){
   play('shock');
-  G.maduroPos=-1;
-  G.maduroWatchMs=0;
+  G.maduroPos=-1;G.maduroWatchMs=0;
   G.maduroDisabledCams[camId]=MADURO_DISABLE_MS;
   refreshMonsterDots();
-
   if(G.camOpen&&G.curCam===camId){
-    renderCamFeed();
-    startMaduroReconnectBar();
+    renderCamFeed();startMaduroReconnectBar();
     setTimeout(()=>{
       if(!G.dead&&!G.won&&G.camOpen&&G.curCam===camId){
         const other=CAMS.find(c=>c.id!==camId&&!isCamDisabled(c.id));
@@ -1895,21 +2119,12 @@ function triggerMaduroCamDisable(camId){
 
 function startMaduroReconnectBar(){
   const fill=document.getElementById('maduroErrFill');
-  if(fill){
-    fill.style.transition='none';
-    fill.style.width='0%';
-    setTimeout(()=>{
-      fill.style.transition=`width ${MADURO_DISABLE_MS/1000}s linear`;
-      fill.style.width='100%';
-    },50);
-  }
+  if(fill){fill.style.transition='none';fill.style.width='0%';
+    setTimeout(()=>{fill.style.transition=`width ${MADURO_DISABLE_MS/1000}s linear`;fill.style.width='100%';},50);}
 }
 
 function updateMaduroReconnectDisplay(camId,secsLeft){
-  if(G.camOpen&&G.curCam===camId){
-    const el=document.getElementById('maduroReconnectSec');
-    if(el) el.textContent=secsLeft;
-  }
+  if(G.camOpen&&G.curCam===camId){const el=document.getElementById('maduroReconnectSec');if(el) el.textContent=secsLeft;}
 }
 
 /* ════ MUSIC BOX ════ */
@@ -1923,17 +2138,14 @@ function updateMusicBoxUI(){
   else if(p<=30){fill.classList.add('warn');status='LAAG — WIND OP!';}
   else if(p<=55){status='MATIG — IN DE GATEN HOUDEN';}
   document.getElementById('mbStatus').textContent=status;
-
   const ct=document.getElementById('ct'+MUSIC_CAM_ID);
   if(ct){if(p<=25) ct.classList.add('ct-music-warn');else ct.classList.remove('ct-music-warn');}
-
   if(SFX.muziek){
     if(p>50) SFX.muziek.playbackRate=1;
     else if(p>25) SFX.muziek.playbackRate=0.82;
     else if(p>10) SFX.muziek.playbackRate=0.62;
     else SFX.muziek.playbackRate=0.4;
   }
-
   if(G.curCam===MUSIC_CAM_ID){
     const overlay=document.getElementById('tomDangerOverlay');
     const danger=Math.max(0,(100-p)/100);
@@ -1968,33 +2180,30 @@ function tickJeffrey(){
     G.jeffreyStep++;
     if(G.jeffreyStep>=JEFFREY_PATH.length){triggerJeffreyJS();return;}
     G.jeffreyPos=JEFFREY_PATH[G.jeffreyStep];
-    G.jeffreyTimer=JEFFREY_SWITCH_S;
+    G.jeffreyTimer=G.cfg.jeffreySwitch||JEFFREY_SWITCH_S;
     play('jeffreyLaugh');
-    refreshMonsterDots();
-    if(G.camOpen) renderCamFeed();
+    refreshMonsterDots();if(G.camOpen) renderCamFeed();
   }
 }
 
-/* ════ CHAPO AI — immune to doors ════ */
+/* ════ CHAPO AI ════ */
 function tickChapo(){
   if(!G.chapoActive||G.dead||G.won) return;
   if(G.chapoAlarm) return;
   const tickSec=TICK_MS/1000;
   const watching=G.camOpen&&G.curCam===CHAPO_CAM_ID&&!isCamDisabled(CHAPO_CAM_ID);
   if(!watching) G.chapoTimer-=tickSec;
-  const ratio=G.chapoTimer/CHAPO_ATTACK_S;
+  const chapoMax = G.cfg.chapoAttack||CHAPO_ATTACK_S;
+  const ratio=G.chapoTimer/chapoMax;
   let newSprite=ratio>0.6?0:ratio>0.25?1:2;
   if(newSprite!==G.chapoSprite){G.chapoSprite=newSprite;if(G.camOpen&&G.curCam===CHAPO_CAM_ID) renderCamFeed();}
   if(G.chapoTimer<=0&&!G.chapoAlarm) triggerChapoAlarm();
 }
 
 function triggerChapoAlarm(){
-  G.chapoAlarm=true;
-  play('alarm');
+  G.chapoAlarm=true;play('alarm');
   document.getElementById('alarmOverlay').style.display='block';
-  refreshMonsterDots();
-  if(G.camOpen) renderCamFeed();
-
+  refreshMonsterDots();if(G.camOpen) renderCamFeed();
   G.chapoKillTimer=setTimeout(()=>{
     if(!G.dead&&!G.won&&G.chapoAlarm) triggerChapoJS();
   }, CHAPO_KILL_DELAY_MS);
@@ -2004,64 +2213,53 @@ function triggerChapoAlarm(){
 function scheduleDiddyMove(){
   if(G.diddyMoveTimer) clearTimeout(G.diddyMoveTimer);
   if(G.dead||G.won||!G.diddyActive) return;
-  const intervals=DIDDY_MOVE_IVAL;
+  const intervals = G.cfg.diddyMoveIval || DIDDY_MOVE_IVAL_BASE;
   const base=intervals[Math.min(G.hour,5)];
+  if(base===Infinity) return;
   const delay=base+Math.random()*3000-1000;
   G.diddyMoveTimer=setTimeout(()=>{advanceDiddy();scheduleDiddyMove();},delay);
 }
 
 function advanceDiddy(){
   if(G.dead||G.won||!G.diddyActive) return;
-  if(G.diddyPos===POS.LD||G.diddyPos===POS.RD){
-    triggerDiddyJS();
-    return;
-  }
+  if(G.diddyPos===POS.LD||G.diddyPos===POS.RD){triggerDiddyJS();return;}
   let np=G.diddyPos;
   if(G.diddyPos===POS.C0) np=POS.C1;
   else if(G.diddyPos===POS.C1) np=POS.C2;
   else if(G.diddyPos===POS.C2){
     if(!G.diddyPath) G.diddyPath=Math.random()<.5?'left':'right';
-    np=G.diddyPath==='left'?POS.C3:POS.C4;
-    G.diddyPath=null;
+    np=G.diddyPath==='left'?POS.C3:POS.C4;G.diddyPath=null;
   }
   else if(G.diddyPos===POS.C3) np=POS.LD;
   else if(G.diddyPos===POS.C4) np=POS.RD;
   G.diddyPos=np;
-  refreshMonsterDots();
-  if(G.camOpen) renderCamFeed();
+  refreshMonsterDots();if(G.camOpen) renderCamFeed();
   updateAlarmUI();
   if(np===POS.LD||np===POS.RD){
-    G.diddyMoveTimer=setTimeout(()=>{
-      if(!G.dead&&!G.won) triggerDiddyJS();
-    }, 2500);
+    G.diddyMoveTimer=setTimeout(()=>{if(!G.dead&&!G.won) triggerDiddyJS();}, 2500);
   }
 }
 
 /* ════ MARK VENT AI ════ */
 function scheduleMarkCheck(){
   if(G.markCheckInterval) clearInterval(G.markCheckInterval);
+  const interval = G.cfg.markInterval || 10000;
+  if(interval===Infinity) return;
   G.markCheckInterval=setInterval(()=>{
     if(G.dead||G.won||G.markInVent) return;
     if(Math.random()<0.10) markAppear();
-  },10000);
+  }, interval);
 }
 
 function markAppear(){
   if(G.dead||G.won||G.markInVent) return;
-  G.markInVent=true;
-  play('vent');
+  G.markInVent=true;play('vent');
   if(Math.random()<0.20) setTimeout(()=>play('markAudio'),400);
   updateVentUI();
   if(G.ventClosed){markLeaveAfterDelay(1000+Math.random()*2000);return;}
   const img=document.getElementById('markVentImg');
   img.classList.add('mark-visible');
-
-  G.markAppearTimer=setTimeout(()=>{
-    if(!G.dead&&!G.won&&G.markInVent&&!G.ventClosed){
-      img.classList.add('mark-urgent');
-    }
-  },5000);
-
+  G.markAppearTimer=setTimeout(()=>{if(!G.dead&&!G.won&&G.markInVent&&!G.ventClosed) img.classList.add('mark-urgent');},5000);
   G.markKillTimer=setTimeout(()=>{if(!G.dead&&!G.won&&G.markInVent&&!G.ventClosed) triggerMarkJS();},8000);
 }
 
@@ -2071,8 +2269,7 @@ function markLeave(){
   if(G.markAppearTimer){clearTimeout(G.markAppearTimer);G.markAppearTimer=null;}
   if(G.markKillTimer){clearTimeout(G.markKillTimer);G.markKillTimer=null;}
   if(G.markLeaveTimer){clearTimeout(G.markLeaveTimer);G.markLeaveTimer=null;}
-  stop('vent');
-  hideAttackFlash();
+  stop('vent');hideAttackFlash();
   const img=document.getElementById('markVentImg');
   img.classList.remove('mark-visible','mark-urgent');
   updateVentUI();
@@ -2091,8 +2288,7 @@ function toggleVent(){
   if(G.ventClosed&&G.markInVent){
     if(G.markAppearTimer){clearTimeout(G.markAppearTimer);G.markAppearTimer=null;}
     if(G.markKillTimer){clearTimeout(G.markKillTimer);G.markKillTimer=null;}
-    hideAttackFlash();
-    markLeaveAfterDelay(1000+Math.random()*2000);
+    hideAttackFlash();markLeaveAfterDelay(1000+Math.random()*2000);
   } else if(!G.ventClosed&&G.markInVent){
     if(G.markKillTimer) clearTimeout(G.markKillTimer);
     G.markKillTimer=setTimeout(()=>{if(!G.dead&&!G.won&&G.markInVent&&!G.ventClosed) triggerMarkJS();},1000);
@@ -2129,8 +2325,7 @@ function toggleCam(){
   }
   if(G.camOpen) switchCam(G.curCam);
   if(G.camOpen) shadowGijsDismiss();
-  updateLureUI();
-  updateAlarmUI();
+  updateLureUI();updateAlarmUI();
 }
 
 /* ════ DOOR LOGIC ════ */
@@ -2165,6 +2360,7 @@ function scheduleMoveTimer(){
   if(G.dead||G.won) return;
   const intervals=G.cfg.moveIval;
   const base=intervals[Math.min(G.hour,5)];
+  if(base===Infinity) return;
   const delay=base+Math.random()*4000-1500;
   G.mMoveTimer=setTimeout(()=>{advanceMonster();scheduleMoveTimer();},delay);
 }
@@ -2200,8 +2396,7 @@ function retreatGijs(){
   if(G.mDoorTimer){clearTimeout(G.mDoorTimer);G.mDoorTimer=null;}
   const backs=[POS.C0,POS.C1,POS.C2];
   G.mPos=backs[Math.floor(Math.random()*backs.length)];
-  play('footsteps');
-  refreshMonsterDots();refreshDoorLights();
+  play('footsteps');refreshMonsterDots();refreshDoorLights();
   if(G.camOpen) renderCamFeed();
   updateLureUI();
 }
@@ -2220,9 +2415,9 @@ function armDoorTimer(){
 function scheduleHoboMove(){
   if(G.hoboMoveTimer) clearTimeout(G.hoboMoveTimer);
   if(G.dead||G.won) return;
-  const minMs=G.cfg.hoboMinMs;
-  const maxMs=G.cfg.hoboMaxMs;
-  const delay=minMs+Math.random()*(maxMs-minMs);
+  if(!G.cfg.hoboActive) return;
+  const delay=G.cfg.hoboMinMs+Math.random()*(G.cfg.hoboMaxMs-G.cfg.hoboMinMs);
+  if(!isFinite(delay)) return;
   G.hoboMoveTimer=setTimeout(()=>{moveHobo();scheduleHoboMove();},delay);
 }
 
@@ -2231,8 +2426,7 @@ function moveHobo(){
   let np,attempts=0;
   do{np=HOBO_ALLOWED_CAMS[Math.floor(Math.random()*HOBO_ALLOWED_CAMS.length)];attempts++;}
   while(np===G.hoboPos&&attempts<20);
-  G.hoboPos=np;
-  refreshMonsterDots();
+  G.hoboPos=np;refreshMonsterDots();
   if(G.camOpen) renderCamFeed();
   updateLureUI();
 }
@@ -2277,28 +2471,23 @@ function useLure(){
   if(!G.lureReady||!inLureRange()||G.dead||G.won) return;
   if(hoboOnCurrentCam()){triggerHoboJS();return;}
   play('lure');
-
   if(G.diddyActive&&G.diddyPos===G.curCam&&G.curCam!==MUSIC_CAM_ID){
     const pb={[POS.LD]:POS.C3,[POS.RD]:POS.C4,[POS.C3]:POS.C2,[POS.C4]:POS.C2,[POS.C2]:POS.C1,[POS.C1]:POS.C0,[POS.C0]:POS.C0};
     const np=pb[G.diddyPos];
     if(np!==undefined){
       if(G.diddyMoveTimer){clearTimeout(G.diddyMoveTimer);G.diddyMoveTimer=null;}
-      G.diddyPos=np;
-      G.diddyPath=null;
-      refreshMonsterDots();
-      if(G.camOpen) renderCamFeed();
+      G.diddyPos=np;G.diddyPath=null;
+      refreshMonsterDots();if(G.camOpen) renderCamFeed();
       scheduleDiddyMove();
     }
   }
-
   const pb={[POS.LD]:POS.C3,[POS.RD]:POS.C4,[POS.C3]:POS.C2,[POS.C4]:POS.C2,[POS.C2]:POS.C1,[POS.C1]:POS.C0,[POS.C0]:POS.C0};
   const np=pb[G.mPos];
   if(np!==undefined){
     G.mPos=np;
     if(G.mDoorTimer){clearTimeout(G.mDoorTimer);G.mDoorTimer=null;}
     if(G.mRetreatTimer){clearTimeout(G.mRetreatTimer);G.mRetreatTimer=null;}
-    refreshMonsterDots();refreshDoorLights();
-    if(G.camOpen) renderCamFeed();
+    refreshMonsterDots();refreshDoorLights();if(G.camOpen) renderCamFeed();
   }
   G.lureReady=false;G.lureCD=LURE_CD_S;
   clearInterval(G.lureCDTimer);
@@ -2309,21 +2498,18 @@ function useLure(){
 /* ════ SHADOW GIJS AI ════ */
 function tickShadowGijs(){
   if(G.dead||G.won||G.camOpen||G.shadowActive) return;
-  if(Math.random()<G.cfg.shadowChance) shadowGijsAppear();
+  if(G.cfg.shadowChance>0&&Math.random()<G.cfg.shadowChance) shadowGijsAppear();
 }
 
 function shadowGijsAppear(){
   if(G.shadowActive||G.dead||G.won) return;
   G.shadowActive=true;
   const img=document.getElementById('shadowGijsOfficeImg');
-  img.style.display='block';
-  img.style.animation='shadowGijsFade 0.4s ease-out forwards';
+  img.style.display='block';img.style.animation='shadowGijsFade 0.4s ease-out forwards';
   setTimeout(()=>{img.style.animation='shadowGijsPulse 1s ease-in-out infinite';},400);
   play('shadowGijsAudio');
   if(G.shadowKillTimer) clearTimeout(G.shadowKillTimer);
-  G.shadowKillTimer=setTimeout(()=>{
-    if(G.shadowActive&&!G.dead&&!G.won) triggerShadowGijsJS();
-  },3000);
+  G.shadowKillTimer=setTimeout(()=>{if(G.shadowActive&&!G.dead&&!G.won) triggerShadowGijsJS();},3000);
 }
 
 function shadowGijsDismiss(){
@@ -2332,9 +2518,7 @@ function shadowGijsDismiss(){
   if(G.shadowKillTimer){clearTimeout(G.shadowKillTimer);G.shadowKillTimer=null;}
   stop('shadowGijsAudio');
   const img=document.getElementById('shadowGijsOfficeImg');
-  img.style.animation='none';
-  img.style.opacity='0';
-  img.style.transition='opacity 0.3s';
+  img.style.animation='none';img.style.opacity='0';img.style.transition='opacity 0.3s';
   setTimeout(()=>{img.style.display='none';img.style.opacity='';img.style.transition='';},320);
 }
 
@@ -2342,19 +2526,8 @@ function triggerShadowGijsJS(){
   if(G.dead) return;
   stop('shadowGijsAudio');
   const img=document.getElementById('shadowGijsOfficeImg');
-  img.style.display='none';
-  G.shadowActive=false;
-  // Use normal Jumpscare.mp3 for Shadow Gijs
-  doJumpscare(FILES.shadowGijsJS,'Shadow Gijs heeft je gevangen.<br><em>"Je had weg moeten kijken..."</em>','jumpscare');
-}
-
-/* ════ 5 AM HANDLER ════ */
-function trigger5AM(){
-  if(G.fiveAMTriggered) return;
-  G.fiveAMTriggered=true;
-  // Stop ambience, start 5AM audio
-  stop('ambience');
-  play('fiveAM');
+  img.style.display='none';G.shadowActive=false;
+  doJumpscare(FILES.shadowGijsJS,'Shadow Gijs heeft je gevangen.<br><em>"Je had weg moeten kijken..."</em>','shadowGijsAudio');
 }
 
 /* ════ GAME TICK ════ */
@@ -2368,14 +2541,8 @@ function gameTick(){
   G.o2=Math.max(0,G.o2-drain);
   updateO2UI();
   if(G.o2<=0&&!G.o2Dead) oxygenDepleted();
-
-  tickMusicBox();
-  tickJeffrey();
-  tickChapo();
-  tickMaduro();
-  tickShadowGijs();
-  maybeGlitch();
-  updateAlarmUI();
+  tickMusicBox();tickJeffrey();tickChapo();tickMaduro();tickShadowGijs();
+  maybeGlitch();updateAlarmUI();
 }
 
 function updateO2UI(){
@@ -2390,10 +2557,8 @@ function updateO2UI(){
 }
 
 function oxygenDepleted(){
-  G.o2Dead=true;
-  stop('ambience');play('oxygenOut');
-  startFire();
-  G.fireTimer=setTimeout(triggerPatrickJS,8000);
+  G.o2Dead=true;stop('ambience');play('oxygenOut');
+  startFire();G.fireTimer=setTimeout(triggerPatrickJS,8000);
 }
 
 /* ════ MUSIC BOX TICK ════ */
@@ -2420,12 +2585,8 @@ function maybeGlitch(){
   const diddyOnCam=G.diddyActive&&G.diddyPos===G.curCam&&G.curCam!==MUSIC_CAM_ID;
   const musicLow=G.curCam===MUSIC_CAM_ID&&G.musicBox<40;
   let chance=0.006;
-  if(gijsOnCam) chance+=0.035;
-  if(gijsNear)  chance+=0.02;
-  if(hoboOnCam) chance+=0.025;
-  if(jeffOnCam) chance+=0.03;
-  if(diddyOnCam) chance+=0.03;
-  if(musicLow)  chance+=0.04*(1-G.musicBox/40);
+  if(gijsOnCam) chance+=0.035;if(gijsNear) chance+=0.02;if(hoboOnCam) chance+=0.025;
+  if(jeffOnCam) chance+=0.03;if(diddyOnCam) chance+=0.03;if(musicLow) chance+=0.04*(1-G.musicBox/40);
   if(Math.random()<chance) fireGlitch();
   if(gijsNear&&Math.random()<0.008) fireFullScreenGlitch();
 }
@@ -2436,12 +2597,10 @@ function fireGlitch(){
   const camMain=document.getElementById('camMain');
   const types=['glitch-tear','glitch-rgb','glitch-shake'];
   const type=types[Math.floor(Math.random()*types.length)];
-  camCanvas.classList.add(type);
-  camMain.classList.add('has-glitch');
+  camCanvas.classList.add(type);camMain.classList.add('has-glitch');
   if(type==='glitch-tear'&&Math.random()<0.5){
     const band=document.getElementById('glitchTearBand');
-    band.style.top=Math.floor(Math.random()*100)+'%';
-    band.style.display='block';
+    band.style.top=Math.floor(Math.random()*100)+'%';band.style.display='block';
     band.style.transform=`translateX(${-15+Math.random()*30}px)`;
   }
   const duration=100+Math.random()*200;
@@ -2456,21 +2615,17 @@ function fireGlitch(){
 
 function fireFullScreenGlitch(){
   const flash=document.getElementById('flashEl');
-  flash.style.background='rgba(0,255,80,0.04)';
-  flash.style.opacity='1';
+  flash.style.background='rgba(0,255,80,0.04)';flash.style.opacity='1';
   setTimeout(()=>{flash.style.opacity='0';flash.style.background='#fff';},60);
 }
 
 /* ════ FIRE ════ */
 let fireCtx,fireW,fireH;
 const FIRE_COLORS=['255,60,0','255,120,0','255,180,0','200,40,0','255,80,10'];
-
 function startFire(){
-  const cv=document.getElementById('fireCanvas');
-  cv.style.display='block';
+  const cv=document.getElementById('fireCanvas');cv.style.display='block';
   fireW=cv.width=window.innerWidth;fireH=cv.height=window.innerHeight;
-  fireCtx=cv.getContext('2d');
-  G.firePtcls=[];G.fireOn=true;
+  fireCtx=cv.getContext('2d');G.firePtcls=[];G.fireOn=true;
   for(let i=0;i<60;i++) G.firePtcls.push(newFlame(true));
   animFire();
 }
@@ -2499,16 +2654,16 @@ function tickTime(){
   if(G.dead||G.won) return;
   const progress=Math.min(1,(Date.now()-G.nightStart)/NIGHT_MS);
   if(progress>=1){triggerWin();return;}
-
-  // 5 AM trigger
-  if(!G.fiveAMTriggered && progress>=FIVE_AM_PROGRESS){
-    trigger5AM();
-  }
-
   const totalMins=progress*360;
   G.hour=Math.floor(totalMins/60);
   const h=G.hour===0?12:G.hour,m=String(Math.floor(totalMins%60)).padStart(2,'0');
   document.getElementById('hudTime').textContent=`${h}:${m} AM`;
+  // 5 AM trigger — at hour 5 (300-360 mins)
+  if(G.hour>=5&&!G.fiveAMDone){
+    G.fiveAMDone=true;
+    stop('ambience');
+    play('fiveAM');
+  }
 }
 
 /* ════ JUMPSCARES & DEATH ════ */
@@ -2558,8 +2713,7 @@ function killTimers(){
    G.shadowKillTimer,G.shadowCheckTimer
   ].forEach(t=>{if(t)try{clearInterval(t);clearTimeout(t);}catch(e){}});
   if(glitchTimer){clearTimeout(glitchTimer);glitchTimer=null;}
-  glitchActive=false;
-  G.fireOn=false;
+  glitchActive=false;G.fireOn=false;
   if(G.fireAnim) cancelAnimationFrame(G.fireAnim);
   hideAttackFlash();
 }
@@ -2597,21 +2751,17 @@ function startGame(){
   document.getElementById('ventLight').classList.remove('active');
   document.getElementById('markVentImg').classList.remove('mark-visible','mark-urgent');
   document.getElementById('ventOxygenWarning').classList.remove('active');
-
   ['dpL','dpR'].forEach(id=>document.getElementById(id).classList.remove('shut'));
   ['dbL','dbR'].forEach(id=>{const b=document.getElementById(id);b.textContent='DEUR';b.classList.remove('on');});
   ['dlL','dlR'].forEach(id=>document.getElementById(id).className='d-light');
 
   const cfg=G.cfg;
-  const showJeffrey=cfg.jeffreyActive;
-  const showChapo=cfg.chapoActive;
-  const showDiddy=cfg.diddyActive;
-  document.getElementById('dotJeffrey').style.display=showJeffrey?'':'none';
-  document.getElementById('jeffreyLabel').style.display=showJeffrey?'':'none';
-  document.getElementById('dotChapo').style.display=showChapo?'':'none';
-  document.getElementById('chapoLabel').style.display=showChapo?'':'none';
-  document.getElementById('dotDiddy').style.display=showDiddy?'':'none';
-  document.getElementById('diddyLabel').style.display=showDiddy?'':'none';
+  document.getElementById('dotJeffrey').style.display=cfg.jeffreyActive?'':'none';
+  document.getElementById('jeffreyLabel').style.display=cfg.jeffreyActive?'':'none';
+  document.getElementById('dotChapo').style.display=cfg.chapoActive?'':'none';
+  document.getElementById('chapoLabel').style.display=cfg.chapoActive?'':'none';
+  document.getElementById('dotDiddy').style.display=cfg.diddyActive?'':'none';
+  document.getElementById('diddyLabel').style.display=cfg.diddyActive?'':'none';
   document.getElementById('nightModeLbl').textContent=cfg.label;
 
   initAudio();play('ambience');
@@ -2619,21 +2769,11 @@ function startGame(){
     if(SFX.muziek){SFX.muziek.volume=0.15;SFX.muziek.playbackRate=1;SFX.muziek.play().catch(()=>{});}
   }
 
-  drawOffice();
-  buildCamStrip();
-  refreshMonsterDots();
-  updateO2UI();
-  updateMusicBoxUI();
-  updateLureUI();
-  updateVentUI();
+  drawOffice();buildCamStrip();refreshMonsterDots();updateO2UI();updateMusicBoxUI();updateLureUI();updateVentUI();
 
   G.lureCD=LURE_CD_S;
   G.lureCDTimer=setInterval(()=>{G.lureCD--;if(G.lureCD<=0){G.lureReady=true;G.lureCD=0;clearInterval(G.lureCDTimer);}updateLureUI();},1000);
-
-  G.alarmReady=true;
-  G.alarmCD=0;
-  updateAlarmUI();
-
+  G.alarmReady=true;G.alarmCD=0;updateAlarmUI();
   G.tickTimer=setInterval(gameTick,TICK_MS);
   G.timeTimer=setInterval(tickTime,250);
   setTimeout(scheduleMoveTimer,5000);
@@ -2642,17 +2782,8 @@ function startGame(){
   G.fireOn=false;
   if(cfg.markRutteActive) scheduleMarkCheck();
   scheduleMaduroSpawn();
-
-  if(cfg.jeffreyActive){
-    G.jeffreyStep=0;
-    G.jeffreyPos=JEFFREY_PATH[0];
-    G.jeffreyTimer=JEFFREY_SWITCH_S;
-  }
-  if(cfg.diddyActive){
-    G.diddyPos=POS.C0;
-    G.diddyPath=null;
-    setTimeout(scheduleDiddyMove, 8000);
-  }
+  if(cfg.jeffreyActive){G.jeffreyStep=0;G.jeffreyPos=JEFFREY_PATH[0];G.jeffreyTimer=cfg.jeffreySwitch||JEFFREY_SWITCH_S;}
+  if(cfg.diddyActive) setTimeout(scheduleDiddyMove, 8000);
   refreshMonsterDots();
 }
 
@@ -2662,6 +2793,9 @@ function restartGame(){
   menuAudio.play().catch(()=>{});
   selectedNight=0;
   for(let i=1;i<=5;i++) document.getElementById('nb'+i).className='night-btn';
+  document.getElementById('nbCustom').className='night-btn';
+  document.getElementById('customNightPanel').style.display='none';
+  document.getElementById('loreCard').style.display='block';
   const sb=document.getElementById('startBtn');
   sb.disabled=true;sb.className='start-btn';sb.textContent='SELECTEER EEN NACHT';
 }
@@ -2708,11 +2842,15 @@ window.addEventListener('resize',()=>{
 
 /* ── INIT ── */
 document.getElementById('startBtn').addEventListener('click',startGame);
+
+// Init custom sliders with defaults
 window.addEventListener('load',()=>{
+  Object.entries(CUSTOM_DEFAULTS).forEach(([char,val])=>setCustomLevel(char,val));
   animateStartBg();
   Object.values(FILES).forEach(src=>{const i=new Image();i.src=src;});
   CAM_BG_KEYS.forEach((key,id)=>getCamBgImg(id,()=>{}));
 });
+
 </script>
 </body>
 </html>
