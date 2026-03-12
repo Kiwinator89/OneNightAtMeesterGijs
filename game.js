@@ -366,8 +366,8 @@ function mkState(){
     o2:100,o2Dead:false,
     lfClosed:false,rtClosed:false,
     ventClosed:false,
-    mPos:POS.C0,mPath:null,mDoorTimer:null,mMoveTimer:null,mRetreatTimer:null,
-    hoboPos:0,hoboMoveTimer:null,
+    mPos:cfg.gijsActive?POS.C0:-1,mPath:null,mDoorTimer:null,mMoveTimer:null,mRetreatTimer:null,
+    hoboPos:cfg.hoboActive?HOBO_ALLOWED_CAMS[Math.floor(Math.random()*HOBO_ALLOWED_CAMS.length)]:-1,hoboMoveTimer:null,
     musicBox:100,isWindingUp:false,
     maduroPos:-1,maduroWatchMs:0,maduroDisabledCams:{},maduroSpawnTimer:null,maduroReconnectTimers:{},
     jeffreyStep:0,jeffreyPos:JEFFREY_START_POS,jeffreyTimer:cfg.jeffreySwitch,
@@ -689,8 +689,8 @@ function renderCamFeed(){
       document.getElementById(i).style.display='none');
     return;
   }
-  const gijsHere   = G.mPos===id&&id!==MUSIC_CAM_ID;
-  const hoboHere   = G.hoboPos===id&&id!==MUSIC_CAM_ID;
+  const gijsHere   = G.cfg.gijsActive&&G.mPos===id&&id!==MUSIC_CAM_ID;
+  const hoboHere   = G.cfg.hoboActive&&G.hoboPos===id&&id!==MUSIC_CAM_ID;
   const jeffreyHere= G.jeffreyActive&&G.jeffreyPos===id&&id!==MUSIC_CAM_ID;
   const chapoHere  = G.chapoActive&&id===CHAPO_CAM_ID&&!G.chapoAlarm;
   const tomHere    = G.cfg.tomActive&&id===MUSIC_CAM_ID;
@@ -749,8 +749,8 @@ function applyTomStyle(img,level){
 
 function refreshMonsterDots(){
   CAMS.forEach(c=>{
-    document.getElementById('md'+c.id)?.classList.toggle('on',G.mPos===c.id&&c.id!==MUSIC_CAM_ID);
-    document.getElementById('hd'+c.id)?.classList.toggle('on',G.hoboPos===c.id&&c.id!==MUSIC_CAM_ID);
+    document.getElementById('md'+c.id)?.classList.toggle('on',G.cfg.gijsActive&&G.mPos===c.id&&c.id!==MUSIC_CAM_ID);
+    document.getElementById('hd'+c.id)?.classList.toggle('on',G.cfg.hoboActive&&G.hoboPos===c.id&&c.id!==MUSIC_CAM_ID);
     const jd=document.getElementById('jd'+c.id);
     if(jd) jd.classList.toggle('on',G.jeffreyActive&&G.jeffreyPos===c.id&&c.id!==MUSIC_CAM_ID);
     const cpd=document.getElementById('cpd'+c.id);
@@ -774,8 +774,8 @@ function refreshMonsterDots(){
       else thumb.classList.remove('cam-maduro-warn');
     }
   });
-  document.getElementById('dotMon').classList.toggle('on',G.mPos>=POS.LD);
-  document.getElementById('dotHobo').classList.toggle('on',true);
+  document.getElementById('dotMon').classList.toggle('on',G.cfg.gijsActive&&G.mPos>=POS.LD);
+  document.getElementById('dotHobo').classList.toggle('on',G.cfg.hoboActive);
   const dotTom=document.getElementById('dotTom');
   if(dotTom){
     dotTom.className='hud-status-dot';
@@ -1168,14 +1168,14 @@ function toggleDoor(side){
     document.getElementById('dpL').classList.toggle('shut',G.lfClosed);
     const b=document.getElementById('dbL');b.textContent=G.lfClosed?'OPEN':'DEUR';b.classList.toggle('on',G.lfClosed);
     if(G.lfClosed){if(G.mPos===POS.LD&&G.mDoorTimer){clearTimeout(G.mDoorTimer);G.mDoorTimer=null;}}
-    else{if(G.mPos===POS.LD) armDoorTimer();}
+    else{if(G.cfg.gijsActive&&G.mPos===POS.LD) armDoorTimer();}
   } else {
     G.rtClosed=!G.rtClosed;
     if(G.rtClosed) play('doorClose');
     document.getElementById('dpR').classList.toggle('shut',G.rtClosed);
     const b=document.getElementById('dbR');b.textContent=G.rtClosed?'OPEN':'DEUR';b.classList.toggle('on',G.rtClosed);
     if(G.rtClosed){if(G.mPos===POS.RD&&G.mDoorTimer){clearTimeout(G.mDoorTimer);G.mDoorTimer=null;}}
-    else{if(G.mPos===POS.RD) armDoorTimer();}
+    else{if(G.cfg.gijsActive&&G.mPos===POS.RD) armDoorTimer();}
   }
   refreshDoorLights();
 }
@@ -1191,6 +1191,7 @@ function refreshDoorLights(){
 function scheduleMoveTimer(){
   if(G.mMoveTimer) clearTimeout(G.mMoveTimer);
   if(G.dead||G.won) return;
+  if(!G.cfg.gijsActive) return;
   const intervals=G.cfg.moveIval;
   const base=intervals[Math.min(G.hour,5)];
   if(base===Infinity) return;
@@ -1200,6 +1201,7 @@ function scheduleMoveTimer(){
 
 function advanceMonster(){
   if(G.dead||G.won) return;
+  if(!G.cfg.gijsActive) return;
   if(G.mPos===POS.LD||G.mPos===POS.RD) return;
   if(Math.random()<0.2) play('laugh');
   let np=G.mPos;
@@ -1236,9 +1238,9 @@ function retreatGijs(){
 
 function armDoorTimer(){
   if(G.mDoorTimer) clearTimeout(G.mDoorTimer);
-  if(G.dead||G.won) return;
+  if(G.dead||G.won||!G.cfg.gijsActive) return;
   G.mDoorTimer=setTimeout(()=>{
-    if(G.dead||G.won) return;
+    if(G.dead||G.won||!G.cfg.gijsActive) return;
     if(G.mPos===POS.LD&&!G.lfClosed) triggerGijsJS();
     if(G.mPos===POS.RD&&!G.rtClosed) triggerGijsJS();
   },GRACE_MS);
@@ -1258,6 +1260,7 @@ function scheduleHoboMove(){
 
 function moveHobo(){
   if(G.dead||G.won) return;
+  if(!G.cfg.hoboActive) return;
   let np,attempts=0;
   do{np=HOBO_ALLOWED_CAMS[Math.floor(Math.random()*HOBO_ALLOWED_CAMS.length)];attempts++;}
   while(np===G.hoboPos&&attempts<20);
@@ -1276,8 +1279,8 @@ function inLureRange(){
     [POS.C2]:[POS.C1,POS.C3,POS.C4],[POS.C3]:[POS.C2,POS.LD],
     [POS.C4]:[POS.C2,POS.RD],[POS.LD]:[POS.C3],[POS.RD]:[POS.C4]
   };
-  const gijsInRange=G.curCam!==MUSIC_CAM_ID&&(G.mPos===G.curCam||(adj[G.mPos]||[]).includes(G.curCam));
-  const hoboInRange=G.curCam!==MUSIC_CAM_ID&&G.hoboPos===G.curCam;
+  const gijsInRange=G.cfg.gijsActive&&G.curCam!==MUSIC_CAM_ID&&(G.mPos===G.curCam||(adj[G.mPos]||[]).includes(G.curCam));
+  const hoboInRange=G.cfg.hoboActive&&G.curCam!==MUSIC_CAM_ID&&G.hoboPos===G.curCam;
   const diddyInRange=G.diddyActive&&G.curCam!==MUSIC_CAM_ID&&G.diddyPos===G.curCam;
   return gijsInRange||hoboInRange||diddyInRange;
 }
@@ -1305,7 +1308,7 @@ function updateLureUI(){
 
 function useLure(){
   if(!G.lureReady||!inLureRange()||G.dead||G.won) return;
-  if(hoboOnCurrentCam()){triggerHoboJS();return;}
+  if(hoboOnCurrentCam()&&G.cfg.hoboActive){triggerHoboJS();return;}
   play('lure');
   if(G.diddyActive&&G.diddyPos===G.curCam&&G.curCam!==MUSIC_CAM_ID){
     const pb={[POS.LD]:POS.C3,[POS.RD]:POS.C4,[POS.C3]:POS.C2,[POS.C4]:POS.C2,[POS.C2]:POS.C1,[POS.C1]:POS.C0,[POS.C0]:POS.C0};
@@ -1423,26 +1426,26 @@ function tickMusicBox(){
 function maybeGlitch(){
   if(G.dead||G.won||glitchActive) return;
 
-  // Ambient office glitches — altijd actief, ook zonder camera
+  // Ambient office glitches — zeldzaam, schalen met uur
   const hour = G.hour||0;
-  const ambientChance = 0.004 + hour*0.002;
+  const ambientChance = 0.0008 + hour*0.0003;
   if(Math.random()<ambientChance) fireAmbientGlitch();
 
   // Camera glitches — alleen als camera open is
   if(!G.camOpen) return;
-  const gijsOnCam  = G.mPos===G.curCam&&G.curCam!==MUSIC_CAM_ID;
-  const gijsNear   = [POS.LD,POS.RD].includes(G.mPos);
-  const hoboOnCam  = G.hoboPos===G.curCam&&G.curCam!==MUSIC_CAM_ID;
+  const gijsOnCam  = G.cfg.gijsActive&&G.mPos===G.curCam&&G.curCam!==MUSIC_CAM_ID;
+  const gijsNear   = G.cfg.gijsActive&&[POS.LD,POS.RD].includes(G.mPos);
+  const hoboOnCam  = G.cfg.hoboActive&&G.hoboPos===G.curCam&&G.curCam!==MUSIC_CAM_ID;
   const jeffOnCam  = G.jeffreyActive&&G.jeffreyPos===G.curCam&&G.curCam!==MUSIC_CAM_ID;
   const diddyOnCam = G.diddyActive&&G.diddyPos===G.curCam&&G.curCam!==MUSIC_CAM_ID;
   const musicLow   = G.curCam===MUSIC_CAM_ID&&G.musicBox<40;
-  let chance = 0.012;
-  if(gijsOnCam)  chance+=0.055; if(gijsNear)   chance+=0.035;
-  if(hoboOnCam)  chance+=0.040; if(jeffOnCam)   chance+=0.045;
-  if(diddyOnCam) chance+=0.045; if(musicLow)    chance+=0.06*(1-G.musicBox/40);
-  chance += hour*0.004;
+  let chance = 0.002;
+  if(gijsOnCam)  chance+=0.012; if(gijsNear)   chance+=0.008;
+  if(hoboOnCam)  chance+=0.010; if(jeffOnCam)   chance+=0.012;
+  if(diddyOnCam) chance+=0.012; if(musicLow)    chance+=0.015*(1-G.musicBox/40);
+  chance += hour*0.001;
   if(Math.random()<chance) fireGlitch();
-  if((gijsNear||gijsOnCam)&&Math.random()<0.018) fireFullScreenGlitch();
+  if((gijsNear||gijsOnCam)&&Math.random()<0.004) fireFullScreenGlitch();
 }
 
 function fireGlitch(){
@@ -1501,11 +1504,10 @@ function fireGlitch(){
     camMain.classList.remove('has-glitch');
     document.getElementById('glitchTearBand').style.display='none';
     glitchActive=false;
-    // Agressievere refire kansen
+    // Refire kansen — zeldzaam
     const refire=Math.random();
-    if(refire<0.18)       setTimeout(fireGlitch, 20+Math.random()*40);
-    else if(refire<0.42)  setTimeout(fireGlitch,80+Math.random()*150);
-    else if(refire<0.55)  setTimeout(()=>{fireGlitch();setTimeout(fireGlitch,60+Math.random()*80);},120);
+    if(refire<0.06)       setTimeout(fireGlitch, 30+Math.random()*60);
+    else if(refire<0.14)  setTimeout(fireGlitch,120+Math.random()*200);
   },duration);
 }
 
@@ -1752,9 +1754,8 @@ function startGame(){
   // Timers starten
   G.tickTimer=setInterval(gameTick,TICK_MS);
   G.timeTimer=setInterval(tickTime,250);
-  setTimeout(scheduleMoveTimer,5000);
-  G.hoboPos=HOBO_ALLOWED_CAMS[Math.floor(Math.random()*HOBO_ALLOWED_CAMS.length)];
-  scheduleHoboMove();
+  if(cfg.gijsActive) setTimeout(scheduleMoveTimer,5000);
+  if(cfg.hoboActive) scheduleHoboMove();
   G.fireOn=false;
   if(cfg.markRutteActive) scheduleMarkCheck();
   scheduleMaduroSpawn();
