@@ -81,7 +81,7 @@ const JEFFREY_PATH       = [0,1,2,3,4];
 const JEFFREY_SWITCH_S   = 55;
 const CHAPO_CAM_ID       = 3;
 const CHAPO_ATTACK_S     = 60;
-const DIDDY_MOVE_IVAL_BASE=[26000,20000,14000,10000,7000,4500];
+const DIDDY_MOVE_IVAL_BASE=[26000,20000,18000,13000,9000,7500];
 
 /* ══════════════════════════════════════════
    MOEILIJKHEIDSGRAAD HELPERS
