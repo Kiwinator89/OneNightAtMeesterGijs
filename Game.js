@@ -166,7 +166,7 @@ function stopMenuMusic(){
    CUSTOM NACHT — STANDAARDWAARDEN & UI
 ══════════════════════════════════════════ */
 const CUSTOM_DEFAULTS = {
-  gijs:5, hobo:5, tom:3, mark:3, maduro:3, jeffrey:0, chapo:0, diddy:0, shadow:2
+  gijs:0, hobo:0, tom:0, mark:0, maduro:0, jeffrey:0, chapo:0, diddy:0, shadow:0
 };
 let customLevels = {...CUSTOM_DEFAULTS};
 
@@ -330,6 +330,15 @@ function setCustomLevel(char, val){
     else if(val>=11) row.classList.add('lvl-danger');
     else if(val>=1)  row.classList.add('lvl-active');
   }
+}
+
+/* Pas alle karakters tegelijk aan met een delta of stel ze in op een vaste waarde */
+function adjustAllLevels(delta, mode='add'){
+  Object.keys(customLevels).forEach(char=>{
+    const cur = customLevels[char];
+    const next = mode==='set' ? delta : cur + delta;
+    setCustomLevel(char, next);
+  });
 }
 
 /* ══════════════════════════════════════════
