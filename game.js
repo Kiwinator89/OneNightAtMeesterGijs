@@ -1368,7 +1368,7 @@ function triggerShadowGijsJS(){
   stop('shadowGijsAudio');
   const img=document.getElementById('shadowGijsOfficeImg');
   img.style.display='none';G.shadowActive=false;
-  doJumpscare(FILES.shadowGijsJS,'Shadow Gijs heeft je gevangen.<br><em>"Je had weg moeten kijken..."</em>','shadowGijsAudio');
+  doJumpscare(FILES.shadowGijsJS,'Shadow Gijs heeft je gevangen.<br><em>"Je had weg moeten kijken..."</em>','shadowGijsAudio', FILES.shadowGijsOffice);
   if(SFX.jumpscare){const s=SFX.jumpscare;s.currentTime=0;s.volume=2.0;s.play().catch(()=>{});}
 }
 
@@ -1633,9 +1633,29 @@ function tickTime(){
 }
 
 /* ══════════════════════════════════════════
+   KILLER REVEAL OP DEATH SCREEN
+══════════════════════════════════════════ */
+function showKillerOnDeathScreen(killerSrc){
+  const wrap = document.getElementById('deathKillerWrap');
+  const img  = document.getElementById('deathKillerImg');
+  if(!killerSrc || !wrap || !img){
+    if(wrap) wrap.style.display='none';
+    return;
+  }
+  wrap.style.display='block';
+  // Reset animatie zodat hij opnieuw afspeelt
+  img.style.animation='none';
+  img.src = killerSrc;
+  img.style.display = 'block';
+  // Force reflow voor animatie reset
+  void img.offsetWidth;
+  img.style.animation='killerReveal .6s ease-out forwards, killerBreath 3s .6s ease-in-out infinite';
+}
+
+/* ══════════════════════════════════════════
    JUMPSCARES & DOOD
 ══════════════════════════════════════════ */
-function doJumpscare(src,cause,audioKey='jumpscare'){
+function doJumpscare(src, cause, audioKey='jumpscare', killerSrc=null){
   if(G.dead) return;G.dead=true;killTimers();stopAll();
   doFlash(()=>{
     document.getElementById('jsImg').src=src;
@@ -1645,19 +1665,20 @@ function doJumpscare(src,cause,audioKey='jumpscare'){
       document.getElementById('jsScreen').style.display='none';
       document.getElementById('gameScreen').style.display='none';
       document.getElementById('deathMsg').innerHTML=cause;
+      showKillerOnDeathScreen(killerSrc);
       document.getElementById('deathScreen').style.display='flex';
     },3300);
   });
 }
 
-function triggerGijsJS()  {doJumpscare(FILES.gijsJS,'Meester Gijs heeft je gevonden.<br><em>"That\'s a 1 out of 10. For you."</em>');}
-function triggerPatrickJS(){doJumpscare(FILES.patrickJS,'De zuurstof raakte op.<br><em>"You should have studied harder."</em>');}
-function triggerHoboJS()  {doJumpscare(FILES.hoboGijsJS,'Je lokte het verkeerde monster.<br><em>"...You shouldn\'t have done that."</em>');}
-function triggerTomJS()   {stopWindUp();doJumpscare(FILES.tomJS,'De muziek stopte.<br><em>"...I\'ve been waiting so long to come out."</em>');}
-function triggerJeffreyJS(){doJumpscare(FILES.jeffreyJS,'Jeffrey heeft je gevonden.<br><em>"De deuren houden mij niet tegen."</em>');}
-function triggerMarkJS()  {if(G.dead) return;markLeave();doJumpscare(FILES.markJS,'Mark kwam uit de ventilatie.<br><em>"Je had de schacht moeten sluiten."</em>');}
-function triggerChapoJS() {if(G.dead) return;stop('alarm');doJumpscare(FILES.chapoJS,'Chapo heeft aangevallen.<br><em>"Deuren? Dat is niets voor mij."</em>');}
-function triggerDiddyJS() {if(G.dead) return;doJumpscare(FILES.diddyJS,'Diddy heeft je gevonden.<br><em>"Je had het alarm moeten gebruiken."</em>');}
+function triggerGijsJS()  {doJumpscare(FILES.gijsJS,  'Meester Gijs heeft je gevonden.<br><em>"That\'s a 1 out of 10. For you."</em>',         'jumpscare', FILES.gijsCam);}
+function triggerPatrickJS(){doJumpscare(FILES.patrickJS,'De zuurstof raakte op.<br><em>"You should have studied harder."</em>',                 'jumpscare', null);}
+function triggerHoboJS()  {doJumpscare(FILES.hoboGijsJS,'Je lokte het verkeerde monster.<br><em>"...You shouldn\'t have done that."</em>',      'jumpscare', FILES.hoboGijsCam);}
+function triggerTomJS()   {stopWindUp();doJumpscare(FILES.tomJS,'De muziek stopte.<br><em>"...I\'ve been waiting so long to come out."</em>',   'jumpscare', FILES.tomCam);}
+function triggerJeffreyJS(){doJumpscare(FILES.jeffreyJS,'Jeffrey heeft je gevonden.<br><em>"De deuren houden mij niet tegen."</em>',            'jumpscare', FILES.jeffreyCam);}
+function triggerMarkJS()  {if(G.dead) return;markLeave();doJumpscare(FILES.markJS,'Mark kwam uit de ventilatie.<br><em>"Je had de schacht moeten sluiten."</em>','jumpscare', FILES.markVent);}
+function triggerChapoJS() {if(G.dead) return;stop('alarm');doJumpscare(FILES.chapoJS,'Chapo heeft aangevallen.<br><em>"Deuren? Dat is niets voor mij."</em>',  'jumpscare', FILES.chapoCam);}
+function triggerDiddyJS() {if(G.dead) return;doJumpscare(FILES.diddyJS,'Diddy heeft je gevonden.<br><em>"Je had het alarm moeten gebruiken."</em>',           'jumpscare', FILES.diddyCam);}
 
 function doFlash(cb){
   const el=document.getElementById('flashEl');
@@ -1715,6 +1736,12 @@ function startGame(){
   document.getElementById('attackFlashImg').src='';
   const sgImg=document.getElementById('shadowGijsOfficeImg');
   sgImg.style.display='none';sgImg.style.opacity='';sgImg.style.transition='';sgImg.style.animation='';
+
+  // Killer afbeelding resetten
+  const killerImg = document.getElementById('deathKillerImg');
+  if(killerImg){killerImg.style.display='none';killerImg.src='';}
+  const killerWrap = document.getElementById('deathKillerWrap');
+  if(killerWrap) killerWrap.style.display='none';
 
   // Ventilatie reset
   G.ventClosed=false;
